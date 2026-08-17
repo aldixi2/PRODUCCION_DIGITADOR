@@ -1,0 +1,1836 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>USPP Satipo | Producción</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<style>
+  :root{
+    /* — Marca / cromática institucional — */
+    --navy:       #1B4A6E;   /* azul institucional profundo — cabecera, primario */
+    --navy-2:     #25232A;   /* hover del primario */
+    --blue:       #255F8C;   /* acciones / enlaces */
+    --teal:       #E49C30;   /* acento de datos — series secundarias, focos */
+    --azulclaro:  #E4EEF3;   /* fondo suave sobre superficies blancas */
+
+    /* — Semántica (cumplimiento / alertas) — nunca decorativa, siempre funcional — */
+    --verde:      #0E9F6E;
+    --ambar:      #D97706;
+    --rojo:       #DC2626;
+    --morado:     #6D4FC2;
+
+    /* — Neutros — */
+    --texto:      #101826;
+    --muted:      #5B6472;
+    --borde:      #E4E1D6;
+    --borde-dato: #E2E6EC;
+    --papel:      #F5F3EC;   /* fondo de página — cálido, evoca formato/ficha */
+    --blanco:     #FFFFFF;
+    --radio:      12px;
+
+    /* — Tipografía — */
+    --f-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+    --f-cuerpo:  'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+    --f-dato:    'IBM Plex Mono', 'Consolas', monospace;
+
+    /* alias retro-compatibles usados en reglas más abajo */
+    --azul:  var(--navy);
+    --azul2: var(--navy-2);
+    --azul3: var(--blue);
+    --cian:  var(--teal);
+    --fondo: var(--papel);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important;transition-duration:0.001ms !important}
+  }
+
+  body{
+    font-family:var(--f-cuerpo);
+    background:var(--papel);
+    color:var(--texto);
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.card-titulo,.brand-texto h1,#printTitle{ font-family:var(--f-display); letter-spacing:.1px }
+  .kval,.td-total,.td-num,.th-day,.badge-cumpl,.kpi-anual-badge{ font-family:var(--f-dato); font-variant-numeric:tabular-nums }
+
+  /* ══════════════════════════════
+     HEADER
+  ══════════════════════════════ */
+  header{
+    position:sticky;top:0;z-index:10;
+    background:linear-gradient(180deg,var(--navy) 0%,#25232A 100%);
+    padding:13px 22px 15px;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+    box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 6px 16px -8px rgba(15,42,92,.5);
+  }
+  header::after{
+    content:'';position:absolute;left:0;right:0;bottom:-6px;height:6px;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='12' viewBox='0 0 140 12'%3E%3Cpath d='M0 6 L46 6 L52 1 L58 11 L64 6 L140 6' fill='none' stroke='%23E49C30' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:repeat-x;background-size:140px 12px;opacity:.55;
+  }
+  .brand{display:flex;gap:12px;align-items:center;position:relative}
+  .brand img{height:42px;object-fit:contain}
+  .brand-logo-fallback{
+    width:42px;height:42px;border-radius:11px;flex-shrink:0;
+    background:linear-gradient(145deg,var(--teal),var(--navy) 78%);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 6px rgba(0,0,0,.25);
+  }
+  .brand-logo-fallback svg{width:24px;height:24px;stroke:#fff}
+  .brand-texto h1{font-size:16px;font-weight:700;color:#fff;margin:0;letter-spacing:.1px}
+  .brand-texto .sub{font-size:11px;color:#B9C7E6;margin-top:2px}
+
+  .header-derecha{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .nav-secundario{
+    display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;
+    border:1px solid #D9D5C8;background:#fff;color:var(--navy);
+    font-size:12.5px;font-weight:700;text-decoration:none;cursor:pointer;
+  }
+  .nav-secundario:hover{border-color:var(--navy)}
+
+  .bloque-fechas{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:10px;
+    padding:7px 14px;
+    font-size:11px;
+    line-height:1.6;
+    display:flex;align-items:center;gap:8px;
+    backdrop-filter:blur(2px);
+  }
+  .bloque-fechas svg{width:14px;height:14px;stroke:#F4C868;flex-shrink:0}
+  .bloque-fechas .f1{color:#fff;font-weight:700;font-size:12px;font-family:var(--f-dato)}
+  .bloque-fechas .f2{color:#AEBBDA}
+
+  .badge-estado{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:5px 12px;
+    border:1px solid rgba(16,185,129,.4);
+    border-radius:999px;
+    background:rgba(16,185,129,.14);
+    font-size:11px;
+    color:#6EE7B7;
+    font-weight:600;
+  }
+  .badge-estado::before{content:'';width:7px;height:7px;border-radius:50%;background:#34D399;flex-shrink:0;box-shadow:0 0 0 3px rgba(52,211,153,.25)}
+
+  .btn-print{
+    background:var(--teal);color:#fff;border:none;
+    padding:9px 16px;border-radius:10px;
+    font-size:12px;font-weight:700;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;
+    transition:background .15s, transform .1s;
+  }
+  .btn-print svg{width:15px;height:15px;stroke:#fff}
+  .btn-print:hover{background:#0AA6BE}
+  .btn-print:active{transform:scale(.97)}
+
+  /* ══════════════════════════════
+     LAYOUT
+  ══════════════════════════════ */
+  .wrap{max-width:1600px;margin:0 auto;padding:14px 18px 30px}
+
+  .card{
+    background:var(--blanco);
+    border:1px solid var(--borde-dato);
+    border-radius:var(--radio);
+    padding:14px 16px;
+    margin-bottom:12px;
+    box-shadow:0 1px 2px rgba(16,24,38,.03);
+  }
+  .card-titulo{
+    font-size:13.5px;font-weight:600;color:var(--texto);
+    margin-bottom:12px;
+    display:flex;align-items:center;gap:9px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--borde-dato);
+  }
+  .card-titulo .icono{
+    width:27px;height:27px;border-radius:8px;
+    background:linear-gradient(145deg,var(--azulclaro),#DCEBFA);
+    color:var(--navy);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .card-titulo .icono svg{width:15px;height:15px;stroke:currentColor}
+  .card.soft{background:#FAF9F4}
+
+  /* ══════════════════════════════
+     KPI CARDS
+  ══════════════════════════════ */
+  .kpis{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:12px;
+  }
+  #kpiCards2{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:900px){ .kpis{grid-template-columns:repeat(2,1fr)} }
+  .kpi{
+    position:relative;
+    background:var(--blanco);
+    border:1px solid var(--borde-dato);
+    border-radius:var(--radio);
+    padding:14px 44px 14px 16px;
+    border-top:3px solid var(--navy);
+    box-shadow:0 1px 2px rgba(16,24,38,.04);
+    transition:transform .15s, box-shadow .15s;
+  }
+  .kpi:hover{transform:translateY(-1px);box-shadow:0 6px 16px -8px rgba(16,24,38,.18)}
+  .kpi.k2{border-top-color:var(--teal)}
+  .kpi.k3{border-top-color:var(--verde)}
+  .kpi.k4{border-top-color:var(--morado)}
+  .kpi.k5{border-top-color:var(--verde)}
+  .kpi.k6{border-top-color:var(--rojo)}
+  .kpi.k7{border-top-color:var(--blue)}
+  .kpi .klabel{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;font-weight:600}
+  .kpi .kval{font-size:26px;font-weight:700;color:var(--texto);line-height:1}
+  .kpi .ksub{font-size:11px;color:var(--muted);margin-top:5px;font-family:var(--f-cuerpo)}
+  .kpi .kicon{
+    position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;background:var(--navy);color:#fff;
+  }
+  .kpi .kicon svg{width:14px;height:14px;stroke:currentColor}
+  .kpi.k2 .kicon{background:var(--teal)}
+  .kpi.k3 .kicon{background:var(--verde)}
+  .kpi.k4 .kicon{background:var(--morado)}
+  .kpi.k5 .kicon{background:var(--verde)}
+  .kpi.k6 .kicon{background:var(--rojo)}
+  .kpi.k7 .kicon{background:var(--blue)}
+
+  /* ══════════════════════════════
+     CUMPLIMIENTO / ALERTAS / TENDENCIA
+  ══════════════════════════════ */
+  .badge-cumpl{
+    display:inline-flex;align-items:center;justify-content:center;gap:3px;
+    padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;white-space:nowrap;
+  }
+  .badge-ok{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+  .badge-warn{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
+  .badge-bad{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+  .badge-neutral{background:#f1f5f9;color:#64748b;border:1px solid var(--borde)}
+
+  .tendencia-up{color:#059669;font-weight:700}
+  .tendencia-down{color:#dc2626;font-weight:700}
+  .tendencia-flat{color:#94a3b8;font-weight:600}
+
+  /* ══════════════════════════════
+     FILTROS
+  ══════════════════════════════ */
+  .filtros-nota{font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.5}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .fg{display:flex;flex-direction:column;gap:4px}
+  .fg label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:600}
+  select,input{
+    padding:8px 10px;
+    border:1px solid #D9D5C8;
+    border-radius:9px;
+    background:#FBFAF6;
+    color:var(--texto);
+    font-size:12px;
+    font-family:var(--f-cuerpo);
+    outline:none;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  select:focus,input:focus{border-color:var(--teal);background:#fff;box-shadow:0 0 0 3px rgba(8,145,168,.14)}
+  .btn-ap,.btn-cl,.btn-cargar{
+    display:inline-flex;align-items:center;gap:6px;
+    font-family:var(--f-cuerpo);
+  }
+  .btn-ap svg,.btn-cl svg,.btn-cargar svg{width:13px;height:13px;stroke:currentColor;flex-shrink:0}
+  .btn-ap{
+    background:var(--navy);color:#fff;border:none;
+    padding:8px 18px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;
+    transition:background .15s, transform .1s;
+  }
+  .btn-ap:hover{background:var(--navy-2)}
+  .btn-ap:active{transform:scale(.97)}
+  .btn-cl{
+    background:#fff;border:1px solid #D9D5C8;color:#5B6472;
+    padding:8px 14px;border-radius:9px;font-size:12px;cursor:pointer;
+    transition:background .15s;
+  }
+  .btn-cl:hover{background:#F1EFE7}
+  .muted{color:var(--muted);font-size:11px;line-height:1.4}
+
+  .badge{
+    display:inline-block;padding:3px 10px;
+    border:1px solid var(--borde-dato);
+    border-radius:999px;background:#F6F5F0;font-size:12px;color:var(--texto);
+  }
+
+  /* ══════════════════════════════
+     GRÁFICOS
+  ══════════════════════════════ */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+  .chartbox{
+    border:1px solid var(--borde-dato);border-radius:10px;
+    padding:12px;background:#FBFAF7;
+  }
+  .chartbox-titulo{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+  .chartbox canvas{height:220px !important;max-height:220px !important}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+  /* ══════════════════════════════
+     KPI ANUAL
+  ══════════════════════════════ */
+  .kpi-anual-badge{
+    display:inline-flex;align-items:center;gap:7px;
+    background:var(--azulclaro);
+    border:1px solid #C7D9E3;
+    border-radius:10px;
+    padding:6px 16px;
+    font-size:13px;font-weight:700;color:var(--navy);
+  }
+  .kpi-anual-badge svg{width:14px;height:14px;stroke:currentColor}
+  .btn-cargar{
+    background:#fff;border:1px solid #D9D5C8;color:#374151;
+    padding:7px 14px;border-radius:9px;font-size:12px;cursor:pointer;
+    transition:background .15s;
+  }
+  .btn-cargar:hover{background:#F1EFE7}
+
+  /* ══════════════════════════════
+     TABS
+  ══════════════════════════════ */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap}
+  .tab{
+    padding:7px 16px 7px 12px;
+    border:1px solid var(--borde-dato);
+    border-radius:999px;
+    background:#fff;
+    cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);
+    display:inline-flex;align-items:center;gap:7px;
+    transition:all .15s;
+  }
+  .tab svg{width:14px;height:14px;stroke:currentColor}
+  .tab:hover{border-color:var(--teal);color:var(--navy)}
+  .tab.active{
+    background:var(--navy);border-color:var(--navy);
+    color:#fff;font-weight:700;
+  }
+
+  /* ══════════════════════════════
+     RANKING
+  ══════════════════════════════ */
+  .rk-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .rk-metric-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .rk-metrics{display:flex;gap:6px;flex-wrap:wrap}
+  .rk-metric-btn{
+    padding:6px 12px;border-radius:999px;border:1px solid #D9D5C8;background:#fff;
+    color:var(--muted);font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s;
+  }
+  .rk-metric-btn:hover{border-color:var(--teal);color:var(--navy)}
+  .rk-metric-btn.active{background:var(--navy);border-color:var(--navy);color:#fff}
+
+  .rk-podio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0 18px}
+  .rk-podio-card{
+    position:relative;border-radius:14px;padding:18px 14px 14px;text-align:center;
+    border:1px solid var(--borde-dato);background:#fff;overflow:hidden;
+  }
+  .rk-podio-card.rk-gold{
+    order:2;background:linear-gradient(160deg,#FFF7E4,#FCEAC2 60%,#FADD9B);
+    border-color:#E9C066;transform:translateY(-10px);box-shadow:0 14px 30px -12px rgba(184,118,21,.45);
+  }
+  .rk-podio-card.rk-silver{
+    order:1;background:linear-gradient(160deg,#F7F8FA,#E7EAEE 60%,#D9DEE5);
+    border-color:#C7CDD6;box-shadow:0 10px 22px -12px rgba(30,41,59,.28);
+  }
+  .rk-podio-card.rk-bronze{
+    order:3;background:linear-gradient(160deg,#FBEFE6,#F0D8C4 60%,#E3BE9E);
+    border-color:#D6AE85;box-shadow:0 10px 22px -12px rgba(120,72,24,.28);
+  }
+  .rk-medalla{font-size:30px;line-height:1;margin-bottom:6px}
+  .rk-nombre{font-family:var(--f-display);font-weight:700;font-size:14px;color:var(--texto)}
+  .rk-profesion{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+  .rk-valor{font-family:var(--f-dato);font-size:28px;font-weight:700;color:#1B4A6E;margin:8px 0 2px}
+  .rk-sub{font-size:10.5px;color:var(--muted)}
+  .rk-msg{
+    margin-top:10px;font-size:11px;font-weight:700;color:#8A5A10;
+    background:rgba(255,255,255,.6);border-radius:8px;padding:6px 8px;
+  }
+  .rk-gold .rk-msg{color:#7A4D0A}
+  @media(max-width:900px){ .rk-podio{grid-template-columns:1fr} .rk-podio-card{order:0 !important;transform:none !important} }
+
+  .rk-lista{display:flex;flex-direction:column;gap:6px}
+  .rk-row{
+    display:grid;grid-template-columns:34px 1fr auto 220px;gap:12px;align-items:center;
+    padding:9px 12px;border:1px solid var(--borde-dato);border-radius:10px;background:#fff;
+  }
+  .rk-row:nth-child(odd){background:#FBFAF7}
+  .rk-pos{
+    width:26px;height:26px;border-radius:50%;background:var(--azulclaro);color:var(--navy);
+    display:flex;align-items:center;justify-content:center;font-family:var(--f-dato);font-weight:700;font-size:11px;
+  }
+  .rk-info-nombre{font-size:12.5px;font-weight:700;color:var(--texto)}
+  .rk-info-profesion{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+  .rk-stats{display:flex;gap:12px;font-size:11px;color:var(--muted);white-space:nowrap}
+  .rk-stats b{color:var(--texto);font-family:var(--f-dato)}
+  .rk-aliento{font-size:11px;font-weight:600;color:#2F5E80;text-align:right}
+  @media(max-width:900px){
+    .rk-row{grid-template-columns:26px 1fr;grid-template-rows:auto auto}
+    .rk-stats,.rk-aliento{grid-column:1 / -1;justify-content:flex-start;text-align:left}
+  }
+
+  /* ══════════════════════════════
+     TABLAS
+  ══════════════════════════════ */
+  .scroll{overflow:auto;max-height:560px;border-radius:10px;border:1px solid var(--borde-dato)}
+  table{border-collapse:collapse;width:100%;font-size:11px;background:#fff}
+  th{
+    background:var(--navy);color:#fff;
+    padding:7px 7px;text-align:center;white-space:nowrap;
+    position:sticky;top:0;z-index:2;font-weight:600;font-size:10.5px;
+    letter-spacing:.3px;
+  }
+  th.left{text-align:left;font-family:var(--f-cuerpo)}
+  th.th-total{background:#25232A}
+  th.th-day{font-family:var(--f-dato);font-weight:500;color:#B9D6E8}
+  td{
+    border-bottom:1px solid #F1EFE7;
+    padding:4px 6px;text-align:center;
+    white-space:nowrap;color:#33404E;font-size:11px;
+  }
+  tr:nth-child(even) td{background:#FAF9F5}
+  tr:hover td{background:var(--azulclaro) !important}
+  .left{text-align:left}
+  .td-eess{text-align:left !important;font-weight:600;color:var(--texto);max-width:160px;overflow:hidden;text-overflow:ellipsis;font-family:var(--f-cuerpo);background:#fff}
+  .td-prof{text-align:left !important;color:var(--texto);font-weight:500;font-family:var(--f-cuerpo);background:#fff}
+  .td-prof-tipo{text-align:left !important;color:var(--muted);font-family:var(--f-cuerpo)}
+  .td-total{font-weight:700;color:var(--navy);font-size:12px}
+  .td-num{color:#33404E}
+
+  /* ══════════════════════════════
+     COLUMNAS FIJAS (Establecimiento + Personal)
+     No requieren cálculo de ancho: cada .sticky-col fija su propio
+     borde izquierdo relativo a la anterior mediante --sticky-left.
+  ══════════════════════════════ */
+  .sticky-col{position:sticky;z-index:1;left:var(--sticky-left,0)}
+  th.sticky-col{z-index:3}
+  .sticky-col.sticky-last{box-shadow:4px 0 6px -4px rgba(16,24,38,.18)}
+  .th-eess,.td-eess{width:150px;max-width:150px}
+  .th-prof,.td-prof{width:135px;max-width:135px;overflow:hidden;text-overflow:ellipsis}
+  @media print{
+    .sticky-col{position:static !important;box-shadow:none !important}
+  }
+
+  /* Heatmap — escala teal → navy (misma familia del acento de datos) */
+  .c-hot{background:var(--navy) !important;color:#fff !important;font-weight:700;border-radius:4px}
+  .c-med{background:#9FD8E2 !important;color:#0A3F4A !important;font-weight:600;border-radius:4px}
+  .c-low{background:#EAF6F8 !important;color:#0A6E80 !important;border-radius:4px}
+  .c-alert{
+    position:relative;
+    background:#FCE2E2 !important;color:#7f1d1d !important;font-weight:800;
+    border-radius:4px;box-shadow:inset 0 0 0 1.5px var(--rojo);
+  }
+  .c-alert::before{
+    content:'';position:absolute;top:-2px;left:50%;transform:translateX(-50%);
+    width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;
+    border-bottom:4px solid var(--rojo);
+  }
+
+  .leyenda{display:flex;gap:14px;margin-top:8px;font-size:10px;color:var(--muted);flex-wrap:wrap}
+  .leyenda span{display:flex;align-items:center;gap:5px}
+  .leyenda-dot{width:10px;height:10px;border-radius:2px;display:inline-block;border:1px solid rgba(16,24,38,.12)}
+
+  button:focus-visible,.tab:focus-visible,select:focus-visible,input:focus-visible{
+    outline:2px solid var(--teal);outline-offset:2px;
+  }
+  @keyframes fadeInUp{ from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+  .anim-fadein{ animation:fadeInUp .22s ease }
+
+  /* ══════════════════════════════
+     ESQUELETO DE CARGA
+  ══════════════════════════════ */
+  @keyframes skeletonShimmer{ 0%{background-position:-200px 0} 100%{background-position:200px 0} }
+  .kval.skeleton{
+    color:transparent !important;
+    background:linear-gradient(90deg,#E9E7DE 25%,#F5F3EC 37%,#E9E7DE 63%);
+    background-size:400px 100%;
+    animation:skeletonShimmer 1.4s ease infinite;
+    border-radius:6px;
+    display:inline-block;
+    min-width:46px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .kval.skeleton{animation:none;background:#EDEAE0}
+  }
+
+  /* ══════════════════════════════
+     ANILLO DE PROGRESO (KPI cumplimiento)
+  ══════════════════════════════ */
+  .kpi .kpi-ring{position:absolute;top:10px;right:10px;width:34px;height:34px}
+  .kpi .kpi-ring circle{transition:stroke-dashoffset .6s ease, stroke .3s ease}
+
+  /* ══════════════════════════════
+     IMPRESIÓN
+  ══════════════════════════════ */
+  #printHeader,#printFooter{display:none}
+  #printFiltroBanner{display:none}
+
+  @media print{
+    @page{ size:A4 landscape; margin:9mm 8mm; }
+    body{background:#fff}
+    header,.no-print{display:none !important}
+    .card{margin:0 0 8px 0;box-shadow:none;background:#fff;border:1px solid #e5e7eb;border-radius:6px}
+    .scroll{max-height:none;overflow:visible;border:0}
+    .kpis{grid-template-columns:repeat(4,1fr)}
+
+    /* Reporte individual de un profesional: es su comprobante mensual de FUAS,
+       no un informe gerencial anual → se oculta el bloque de histórico por año. */
+    body.print-personal #cardReporteAnual{display:none !important}
+    body.print-personal .card{margin:0 0 6px 0}
+
+    #printHeader{
+      display:flex !important;gap:12px;align-items:center;
+      margin-bottom:8px;padding-bottom:8px;
+      border-bottom:2px solid #1B4A6E;
+    }
+    #printHeader img{height:46px}
+    #printTitle{margin:0;font-size:16px;font-weight:700;color:#1B4A6E;letter-spacing:.2px;font-family:'Space Grotesk','Segoe UI',sans-serif}
+    #printSub{font-size:10.5px;color:#374151;margin-top:3px;font-weight:600}
+    #printFechas{font-size:9.5px;color:#64748b;margin-top:2px}
+    #printKPIs span{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+    #printFiltroBanner{
+      display:flex !important;gap:22px;flex-wrap:wrap;align-items:center;
+      margin:0 0 9px 0;padding:8px 14px;
+      background:#E4EEF3;border:1px solid #C7D9E3;border-left:5px solid #1B4A6E;
+      border-radius:7px;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;
+    }
+    .pf-item{display:flex;align-items:center;gap:7px}
+    .pf-item svg{width:15px;height:15px;stroke:#1B4A6E;flex-shrink:0}
+    .pf-item .pf-tx{display:flex;flex-direction:column;gap:0}
+    .pf-item .pf-label{font-size:8px;text-transform:uppercase;letter-spacing:.5px;color:#2F5E80;font-weight:700}
+    .pf-item .pf-value{font-size:14.5px;font-weight:700;color:#1B4A6E;font-family:'Space Grotesk','Segoe UI',sans-serif;line-height:1.25}
+    .pf-item .pf-value.pf-todos{color:#5B6472;font-weight:600;font-size:12.5px;font-family:'IBM Plex Sans',sans-serif}
+    .pf-desglose{
+      flex-basis:100%;font-size:9.5px;color:#1B4A6E;line-height:1.5;
+      margin-top:2px;padding-top:6px;border-top:1px dashed #C7D9E3;
+    }
+
+    #printFooter{
+      display:block !important;
+      margin-top:8px;padding-top:6px;
+      border-top:1px solid #e5e7eb;
+      font-size:9.5px;color:#64748b;text-align:center;
+    }
+
+    #img_c_anio_mes,#img_c_years_total{display:block !important}
+    #c_anio_mes,#c_years_total{display:none !important}
+
+    /* Repetir encabezado de tabla en cada página + no partir filas */
+    table{font-size:9.5px}
+    thead{display:table-header-group}
+    tbody{display:table-row-group}
+    tr{page-break-inside:avoid;break-inside:avoid}
+
+    th{background:#1B4A6E !important;color:#fff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    th.th-total{background:#25232A !important}
+    th.th-day{color:#B9D6E8 !important}
+    .c-hot{background:#1B4A6E !important;color:#fff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .c-med{background:#9FD8E2 !important;color:#0A3F4A !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .c-alert{background:#FCE2E2 !important;color:#7f1d1d !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .badge-ok,.badge-warn,.badge-bad,.badge-neutral{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .kpi{border-top-width:3px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+    .rk-toolbar{display:none !important}
+    .rk-podio-card{-webkit-print-color-adjust:exact;print-color-adjust:exact;break-inside:avoid;transform:none !important}
+    .rk-row{break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════
+     HEADER
+═══════════════════════════════ -->
+<header>
+  <div class="brand">
+    <img src="logo.png" alt="USPP Satipo" id="logoImg"
+         onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex'">
+    <div class="brand-logo-fallback" id="logoFallback" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 13h4l2 6 4-13 2 7h8"/>
+      </svg>
+    </div>
+    <div class="brand-texto">
+      <h1>Dashboard de Producción — USPP Satipo</h1>
+      <div class="sub">Sistema de Información del Personal de Salud</div>
+    </div>
+  </div>
+
+  <div class="header-derecha">
+    <a href="digitador.html" class="nav-secundario no-print">
+      <svg viewBox="0 0 18 18" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="13" height="13" rx="2"/><line x1="2.5" y1="7" x2="15.5" y2="7"/></svg>
+      Digitador
+    </a>
+    <div class="bloque-fechas">
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6.5"/><path d="M9 5.3V9l2.7 1.3"/></svg>
+      <div>
+        <div class="f1" id="fechaActualizacion">Actualizado: cargando…</div>
+        <div class="f2" id="fechaDigitacion">Fecha de digitación al: —</div>
+      </div>
+    </div>
+    <div class="badge-estado" id="estado">Cargando…</div>
+    <button class="btn-print" onclick="window.print()">
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="10" height="6" rx="1"/><path d="M5.5 7V3.5h7V7"/><path d="M5.5 13v3h7v-3"/></svg>
+      Imprimir reporte
+    </button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════
+     CONTENIDO
+═══════════════════════════════ -->
+<div class="wrap">
+
+  <!-- Encabezado para impresión -->
+  <div id="printHeader">
+    <img src="logo.png" alt="USPP Satipo" onerror="this.style.display='none'">
+    <div>
+      <p id="printTitle">PRODUCCIÓN DEL PERSONAL DE SALUD — USPP SATIPO</p>
+      <div id="printSub"></div>
+      <div id="printFechas"></div>
+      <div id="printKPIs" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"></div>
+    </div>
+  </div>
+
+  <!-- Banner destacado: qué EESS / qué personal se está viendo (solo impresión) -->
+  <div id="printFiltroBanner"></div>
+
+  <!-- KPIs -->
+  <div class="kpis no-print" id="kpiCards">
+    <div class="kpi">
+      <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="13" height="13" rx="2"/><line x1="2.5" y1="7" x2="15.5" y2="7"/><line x1="6" y1="10.3" x2="9" y2="10.3"/></svg></div>
+      <div class="klabel">Total registros</div>
+      <div class="kval skeleton" id="kpiTotal" data-raw-val="0">00</div>
+      <div class="ksub" id="kpiTotalSub">Mes seleccionado</div>
+    </div>
+    <div class="kpi k2">
+      <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3.5 15.5c0-3.3 2.5-5.3 5.5-5.3s5.5 2 5.5 5.3"/></svg></div>
+      <div class="klabel">Profesionales activos</div>
+      <div class="kval skeleton" id="kpiProfs" data-raw-val="0">00</div>
+      <div class="ksub">Con producción</div>
+    </div>
+    <div class="kpi k3">
+      <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="10" height="13" rx="1"/><line x1="9" y1="6.5" x2="9" y2="10.5"/><line x1="7" y1="8.5" x2="11" y2="8.5"/><line x1="4" y1="16" x2="14" y2="16"/></svg></div>
+      <div class="klabel">Establecimientos</div>
+      <div class="kval skeleton" id="kpiEESS" data-raw-val="0">00</div>
+      <div class="ksub">Con producción</div>
+    </div>
+    <div class="kpi k4">
+      <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="15" x2="3" y2="9"/><line x1="9" y1="15" x2="9" y2="5"/><line x1="15" y1="15" x2="15" y2="11"/></svg></div>
+      <div class="klabel">Promedio diario</div>
+      <div class="kval skeleton" id="kpiProm" data-raw-val="0">00</div>
+      <div class="ksub">Registros / día</div>
+    </div>
+  </div>
+
+  <div class="kpis no-print" id="kpiCards2">
+    <div class="kpi k5">
+      <svg class="kpi-ring" viewBox="0 0 40 40">
+        <circle cx="20" cy="20" r="16" fill="none" stroke="#E4E1D6" stroke-width="4"/>
+        <circle id="kpiCumplRing" cx="20" cy="20" r="16" fill="none" stroke="#0E9F6E" stroke-width="4"
+          stroke-linecap="round" stroke-dasharray="100.53" stroke-dashoffset="100.53" transform="rotate(-90 20 20)"/>
+      </svg>
+      <div class="klabel">Cumplimiento promedio</div>
+      <div class="kval skeleton" id="kpiCumplimiento" data-raw-val="0">00</div>
+      <div class="ksub">Vs. estándar FUAS/día por profesión</div>
+    </div>
+    <div class="kpi k6">
+      <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.8l7.2 12.4H1.8L9 2.8z"/><line x1="9" y1="7.3" x2="9" y2="10.8"/><circle cx="9" cy="12.8" r="0.15" fill="currentColor"/></svg></div>
+      <div class="klabel">Alertas de sobreproducción</div>
+      <div class="kval skeleton" id="kpiAlertas" data-raw-val="0">00</div>
+      <div class="ksub">Días con FUAS &gt; estándar</div>
+    </div>
+    <div class="kpi k7">
+      <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,13 7,8 10,11 16,4"/><polyline points="11,4 16,4 16,9"/></svg></div>
+      <div class="klabel">Tendencia vs. mes anterior</div>
+      <div class="kval skeleton" id="kpiTendencia" data-raw-val="0">00</div>
+      <div class="ksub" id="kpiTendenciaSub">Total de registros</div>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card no-print">
+    <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="5.3"/><line x1="12.3" y1="12.3" x2="16.5" y2="16.5"/></svg></div> Filtros inteligentes (cascada)</div>
+    <div class="filtros-nota">
+      DNI usado = <b>DNI Resp. Aten.</b> (profesional). No se cruza con DNI del paciente.
+      &nbsp;·&nbsp; <b>Modo confidencial:</b> solo se muestran iniciales + apellidos.
+    </div>
+    <div class="row">
+      <div class="fg">
+        <label>Año</label>
+        <select id="anio"></select>
+      </div>
+      <div class="fg">
+        <label>Mes</label>
+        <select id="mes"></select>
+      </div>
+      <div class="fg" style="min-width:240px;flex:1">
+        <label>Establecimiento (EESS)</label>
+        <select id="estab"><option value="">Todos</option></select>
+      </div>
+      <div class="fg" style="min-width:200px;flex:1">
+        <label>Tipo profesional</label>
+        <select id="tipo"><option value="">Todos</option></select>
+      </div>
+      <div class="fg" style="min-width:300px;flex:2">
+        <label>Profesional (buscar por apellido o nombre)</label>
+        <div style="position:relative">
+          <input id="profSearch" placeholder="Escribe: illesca, carrillo, ana..." style="width:100%;padding-right:28px">
+          <button id="profSearchClear" type="button" title="Limpiar búsqueda"
+            style="display:none;position:absolute;right:6px;top:50%;transform:translateY(-50%);width:18px;height:18px;border:none;background:none;cursor:pointer;color:var(--muted);padding:0">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4.5" y1="4.5" x2="13.5" y2="13.5"/><line x1="13.5" y1="4.5" x2="4.5" y2="13.5"/></svg>
+          </button>
+        </div>
+        <div class="muted" style="margin-top:3px">Ej: Junnior Aldair Illesca Medina → <b>J. A. Illesca Medina</b></div>
+        <div id="profHits" class="muted" style="margin-top:4px"></div>
+      </div>
+      <div class="fg" style="min-width:220px;flex:1">
+        <label>Prestación (opcional)</label>
+        <input id="prest" placeholder="Buscar servicio o ID (ej: 56 o obstetricia)" style="width:100%">
+      </div>
+      <div class="fg">
+        <label title="Un mismo profesional puede tener producción en más de un establecimiento en el mes">Modo matriz personal ⓘ</label>
+        <select id="modo" style="width:190px">
+          <option value="auto" selected>Auto (recomendado)</option>
+          <option value="por_dni">Por profesional (detalle)</option>
+          <option value="resumen">Resumen (1 fila)</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn-ap" id="btn">Aplicar</button>
+        <button class="btn-cl" id="btnReset">Limpiar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRÁFICOS GENERALES -->
+  <div class="card no-print">
+    <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="15" x2="3" y2="9"/><line x1="9" y1="15" x2="9" y2="4"/><line x1="15" y1="15" x2="15" y2="11"/></svg></div> Gráficos — vista general</div>
+    <div class="grid">
+      <div class="chartbox">
+        <div class="chartbox-titulo">Top 15 establecimientos (por registros)</div>
+        <canvas id="c_eess"></canvas>
+      </div>
+      <div class="chartbox">
+        <div class="chartbox-titulo">Distribución por tipo profesional</div>
+        <canvas id="c_tipo"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORTE ANUAL -->
+  <div class="card" id="cardReporteAnual">
+    <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="13" height="11.5" rx="1.5"/><line x1="2.5" y1="7.5" x2="15.5" y2="7.5"/><line x1="6" y1="2" x2="6" y2="5"/><line x1="12" y1="2" x2="12" y2="5"/></svg></div> Reporte anual (imprimible)</div>
+    <div class="muted" style="margin-bottom:10px">
+      Total anual y producción por mes del año seleccionado + comparativo total por año.
+    </div>
+    <div class="row" style="align-items:center;margin-bottom:10px">
+      <div class="kpi-anual-badge" id="kpiAnual">Total anual: —</div>
+      <button class="btn-cargar no-print" id="btnCargarAnio" style="margin-left:auto">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 9a6.5 6.5 0 1 1-1.9-4.6"/><path d="M15.5 3v3.5H12"/></svg>
+        Cargar año
+      </button>
+    </div>
+    <div class="grid">
+      <div class="chartbox">
+        <div class="chartbox-titulo">Producción por mes (año seleccionado)</div>
+        <canvas id="c_anio_mes"></canvas>
+        <img id="img_c_anio_mes" style="display:none;width:100%;max-height:260px;object-fit:contain" alt="">
+      </div>
+      <div class="chartbox">
+        <div class="chartbox-titulo">Total por año (comparativo)</div>
+        <canvas id="c_years_total"></canvas>
+        <img id="img_c_years_total" style="display:none;width:100%;max-height:260px;object-fit:contain" alt="">
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="card soft no-print">
+    <div class="tabs">
+      <div class="tab active" id="tabPersonal"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3.5 15.5c0-3.3 2.5-5.3 5.5-5.3s5.5 2 5.5 5.3"/></svg> Matriz del personal</div>
+      <div class="tab" id="tabEESS"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="10" height="13" rx="1"/><line x1="9" y1="6.5" x2="9" y2="10.5"/><line x1="7" y1="8.5" x2="11" y2="8.5"/><line x1="4" y1="16" x2="14" y2="16"/></svg> Matriz por establecimiento</div>
+      <div class="tab" id="tabRanking"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6z"/></svg> 🏆 Ranking</div>
+    </div>
+  </div>
+
+  <!-- MATRIZ PERSONAL -->
+  <div class="card" id="cardPersonal">
+    <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3.5 15.5c0-3.3 2.5-5.3 5.5-5.3s5.5 2 5.5 5.3"/></svg></div> Matriz del personal (EESS + Personal + días) — Confidencial</div>
+    <div class="scroll" style="margin-top:4px"><table id="matrizPersonal"></table></div>
+    <div class="leyenda">
+      <span><span class="leyenda-dot" style="background:#1B4A6E"></span> Alta producción</span>
+      <span><span class="leyenda-dot" style="background:#9FD8E2"></span> Media producción</span>
+      <span><span class="leyenda-dot" style="background:#EAF6F8"></span> Baja producción</span>
+      <span><span class="leyenda-dot" style="background:#dc2626"></span> Alerta: día con FUAS &gt; estándar</span>
+      <span><span class="leyenda-dot" style="background:#0E9F6E"></span> Cumplimiento ≥70% y ≤110%</span>
+      <span><span class="leyenda-dot" style="background:#d97706"></span> Cumplimiento &lt;70%</span>
+    </div>
+    <div class="muted" style="margin-top:6px">
+      Estándar de referencia (FUAS máx./día por profesión): Médico 60 · Odontólogo 50 · Enfermera 50 · Obstetra/Obstetriz 50 ·
+      Técnico de Enfermería 50 · Nutricionista 40 · Psicólogo 24 · Trabajadora Social 40.
+    </div>
+  </div>
+
+  <!-- MATRIZ EESS -->
+  <div class="card" id="cardEESS" style="display:none">
+    <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="10" height="13" rx="1"/><line x1="9" y1="6.5" x2="9" y2="10.5"/><line x1="7" y1="8.5" x2="11" y2="8.5"/><line x1="4" y1="16" x2="14" y2="16"/></svg></div> Matriz por establecimiento (EESS × días)</div>
+    <div class="scroll" style="margin-top:4px"><table id="matrizEESS"></table></div>
+  </div>
+
+  <!-- RANKING -->
+  <div class="card" id="cardRanking" style="display:none">
+    <div class="card-titulo">
+      <div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6z"/></svg></div>
+      Ranking de Producción — Personal de Salud
+    </div>
+
+    <div class="rk-toolbar no-print">
+      <div class="rk-metric-label">Ordenar por:</div>
+      <div class="rk-metrics" id="rkMetrics">
+        <button class="rk-metric-btn active" data-metric="cumpl" type="button">% Cumplimiento (justo entre profesiones)</button>
+        <button class="rk-metric-btn" data-metric="total" type="button">Total de FUAS</button>
+        <button class="rk-metric-btn" data-metric="promedio" type="button">Promedio por día</button>
+      </div>
+    </div>
+    <div class="muted" style="margin-bottom:10px">
+      El ranking usa los mismos filtros de arriba (año, mes, EESS, tipo profesional, búsqueda). Por defecto ordena por
+      <b>% de cumplimiento</b> frente al estándar de cada profesión, para comparar de forma justa a personal con estándares distintos
+      (ej. un Psicólogo vs. un Médico). Los nombres se muestran en modo confidencial (inicial + apellidos), igual que en la matriz.
+    </div>
+
+    <div class="rk-podio" id="rankingPodio"></div>
+    <div class="rk-lista" id="rankingLista"></div>
+  </div>
+
+  <!-- FOOTER IMPRESIÓN -->
+  <div class="card" id="printFooter">
+    Sistema creado por Junnior Aldair Illesca Medina — USPP Satipo &nbsp;|&nbsp; <span id="printFechaFooter"></span>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+/* ══════════════════════════════════════════
+   ESTADO GLOBAL
+══════════════════════════════════════════ */
+let BASE = [];
+let PREV_BASE = []; // base del mes anterior (para tendencia)
+let MANIFEST = null;
+let chartEESS=null, chartTipo=null, chartAnioMes=null, chartYearsTotal=null;
+const YEAR_CACHE       = new Map();
+const YEARS_TOTAL_CACHE = new Map();
+const $ = id => document.getElementById(id);
+
+const MONTHS = [
+  {n:1,t:"Enero"},{n:2,t:"Febrero"},{n:3,t:"Marzo"},{n:4,t:"Abril"},
+  {n:5,t:"Mayo"},{n:6,t:"Junio"},{n:7,t:"Julio"},{n:8,t:"Agosto"},
+  {n:9,t:"Septiembre"},{n:10,t:"Octubre"},{n:11,t:"Noviembre"},{n:12,t:"Diciembre"}
+];
+
+/* Paleta de colores para gráficos */
+const PALETTE = [
+  "#1B4A6E","#E49C30","#0E9F6E","#6D4FC2",
+  "#D97706","#BE185D","#255F8C","#065F46",
+  "#4338CA","#C2410C","#0369A1","#7C3AED"
+];
+if(window.Chart){
+  Chart.defaults.font.family = "'IBM Plex Sans','Segoe UI',sans-serif";
+  Chart.defaults.color = "#5B6472";
+}
+
+/* Plugin propio (sin librería externa) para mostrar el valor sobre cada barra —
+   así se lee el número exacto sin pasar el mouse, útil también en capturas. */
+const valueLabelPlugin = {
+  id:"valueLabels",
+  afterDatasetsDraw(chart){
+    const {ctx} = chart;
+    const horizontal = chart.options.indexAxis==="y";
+    ctx.save();
+    ctx.font = "600 10px 'IBM Plex Mono', monospace";
+    ctx.fillStyle = "#33404E";
+    ctx.textBaseline = "middle";
+    chart.data.datasets.forEach((dataset,dsIndex)=>{
+      const meta = chart.getDatasetMeta(dsIndex);
+      if(meta.hidden) return;
+      meta.data.forEach((bar,i)=>{
+        const val = dataset.data[i];
+        if(val===0 || val==null) return;
+        const label = Number(val).toLocaleString();
+        if(horizontal){
+          ctx.textAlign="left";
+          ctx.fillText(label, bar.x+6, bar.y);
+        } else {
+          ctx.textAlign="center";
+          ctx.fillText(label, bar.x, bar.y-8);
+        }
+      });
+    });
+    ctx.restore();
+  }
+};
+
+/* ══════════════════════════════════════════
+   ESTÁNDARES DE PRODUCCIÓN (FUAS máx./día/persona)
+   Editable: cambia el número si tu norma real difiere.
+   Nota: en la tabla original, ENFERMERA y OBSTETRA aparecían
+   con 50 y con 40 → se unificaron aquí en 50 (a pedido).
+══════════════════════════════════════════ */
+const ESTANDARES_FUA = {
+  "MEDICO":                 60,
+  "ODONTOLOGO":             50,
+  "ENFERMERA":              50,
+  "OBSTETRA":               50,   // incluye "Obstetriz" (mismo estándar, ver REGLAS_TIPO)
+  "TECNICO DE ENFERMERIA":  50,
+  "NUTRICIONISTA":          40,
+  "PSICOLOGO":              24,
+  "TRABAJADORA SOCIAL":     40
+};
+/* Umbrales para el semáforo de % de cumplimiento */
+const UMBRAL_ALTO = 110; // por encima de esto: posible sobreproducción / error
+const UMBRAL_BAJO = 70;  // por debajo de esto: bajo el estándar
+
+function normTipo(t){
+  return String(t||"")
+    .toUpperCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"") // quita tildes
+    .replace(/\s+/g," ")
+    .trim();
+}
+const ESTANDARES_NORM = new Map(
+  Object.entries(ESTANDARES_FUA).map(([k,v])=>[normTipo(k),v])
+);
+
+/* Los sistemas de salud no siempre escriben la profesión igual
+   ("Obstetriz" en vez de "Obstetra", "Enfermera(a)", "Técnico en
+   Enfermería", "Cirujano Dentista", etc.). Para no depender de la
+   redacción exacta, si no hay coincidencia literal se busca por
+   palabra clave. El orden importa: lo más específico va primero
+   (p.ej. "técnico en enfermería" antes que "enfermería" a secas). */
+const REGLAS_TIPO = [
+  { estandar:"TECNICO DE ENFERMERIA", test:t=>/TECNIC/.test(t) && /ENFERMER/.test(t) },
+  { estandar:"OBSTETRA",              test:t=>/OBSTETR/.test(t) },              // Obstetra / Obstetriz
+  { estandar:"ENFERMERA",             test:t=>/ENFERMER/.test(t) },
+  { estandar:"MEDICO",                test:t=>/MEDIC/.test(t) },
+  { estandar:"ODONTOLOGO",            test:t=>/ODONTOLOG|DENTISTA/.test(t) },
+  { estandar:"NUTRICIONISTA",         test:t=>/NUTRICION/.test(t) },
+  { estandar:"PSICOLOGO",             test:t=>/PSICOLOG/.test(t) },
+  { estandar:"TRABAJADORA SOCIAL",    test:t=>/TRABAJO SOCIAL|TRABAJADOR/.test(t) }
+];
+
+function getEstandar(tipoProfesional){
+  const k = normTipo(tipoProfesional);
+  if(ESTANDARES_NORM.has(k)) return ESTANDARES_NORM.get(k);
+  for(const regla of REGLAS_TIPO){
+    if(regla.test(k)) return ESTANDARES_FUA[regla.estandar];
+  }
+  return null;
+}
+
+/* ══════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════ */
+function esc(s){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) }
+function unesc(s){ return String(s).replace(/&amp;|&lt;|&gt;|&quot;|&#39;/g, m=>({'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"}[m])) }
+function canonDNI(v){ return String(v??"").replace(/\D/g,"") }
+function diasEnMes(anio,mes){ return new Date(Number(anio),Number(mes),0).getDate() }
+
+function formatFecha(str){
+  /* Convierte "2026-04-08 11:30:48" → "08/04/2026 11:30 AM/PM" */
+  if(!str) return "—";
+  const d = new Date(str.replace(" ","T"));
+  if(isNaN(d)) return str;
+  const dd = String(d.getDate()).padStart(2,"0");
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const yyyy = d.getFullYear();
+  let h = d.getHours(), ampm = h>=12?"PM":"AM";
+  h = h%12 || 12;
+  const min = String(d.getMinutes()).padStart(2,"0");
+  return `${dd}/${mm}/${yyyy} ${h}:${min} ${ampm}`;
+}
+
+/* ══════════════════════════════════════════
+   CONFIDENCIALIDAD PROFESIONAL
+══════════════════════════════════════════ */
+let PROF_FULL_LIST      = [];
+let PROF_FULL_TO_LABEL  = new Map();
+let PROF_LABEL_TO_FULL  = new Map();
+let PROF_SELECTED_FULL  = "";
+
+function splitNameParts(full){
+  full = String(full||"").trim().replace(/\s+/g," ");
+  if(!full) return {names:[],lastnames:[]};
+  const parts = full.split(" ");
+  const lastnames = parts.length>=2 ? parts.slice(-2) : parts.slice(-1);
+  const names = parts.slice(0, parts.length-lastnames.length);
+  return {names,lastnames};
+}
+function labelConfidencial(full){
+  const {names,lastnames} = splitNameParts(full);
+  const ini = names.map(n=>(n[0]?n[0].toUpperCase()+".":"")).filter(Boolean).join(" ");
+  return `${ini}${ini?" ":""}${lastnames.join(" ")}`.trim();
+}
+
+window.selectProf = (full)=>{
+  PROF_SELECTED_FULL = unesc(full);
+  $("profSearch").value = PROF_FULL_TO_LABEL.get(PROF_SELECTED_FULL)||PROF_SELECTED_FULL;
+  $("profHits").textContent = "";
+  actualizarBotonLimpiarBusqueda();
+  refreshCascada();
+  render();
+};
+
+/* ══════════════════════════════════════════
+   EVENTOS BOTONES
+══════════════════════════════════════════ */
+$("btn").onclick = ()=>render();
+$("btnReset").onclick = ()=>{
+  $("estab").value=""; $("tipo").value="";
+  $("prest").value=""; $("modo").value="auto";
+  $("profSearch").value=""; $("profHits").textContent="";
+  PROF_SELECTED_FULL="";
+  actualizarBotonLimpiarBusqueda();
+  refreshCascada(); render();
+};
+$("tabPersonal").onclick = ()=>{
+  $("tabPersonal").classList.add("active");
+  $("tabEESS").classList.remove("active");
+  $("tabRanking").classList.remove("active");
+  $("cardPersonal").style.display="";
+  $("cardEESS").style.display="none";
+  $("cardRanking").style.display="none";
+  $("printTitle").textContent="PRODUCCIÓN DEL PERSONAL DE SALUD — USPP SATIPO";
+  $("cardPersonal").classList.remove("anim-fadein"); void $("cardPersonal").offsetWidth; $("cardPersonal").classList.add("anim-fadein");
+};
+$("tabEESS").onclick = ()=>{
+  $("tabEESS").classList.add("active");
+  $("tabPersonal").classList.remove("active");
+  $("tabRanking").classList.remove("active");
+  $("cardEESS").style.display="";
+  $("cardPersonal").style.display="none";
+  $("cardRanking").style.display="none";
+  $("printTitle").textContent="PRODUCCIÓN POR ESTABLECIMIENTO — USPP SATIPO";
+  $("cardEESS").classList.remove("anim-fadein"); void $("cardEESS").offsetWidth; $("cardEESS").classList.add("anim-fadein");
+};
+$("tabRanking").onclick = ()=>{
+  $("tabRanking").classList.add("active");
+  $("tabPersonal").classList.remove("active");
+  $("tabEESS").classList.remove("active");
+  $("cardRanking").style.display="";
+  $("cardPersonal").style.display="none";
+  $("cardEESS").style.display="none";
+  $("printTitle").textContent="RANKING DE PRODUCCIÓN — PERSONAL DE SALUD — USPP SATIPO";
+  renderRanking();
+  $("cardRanking").classList.remove("anim-fadein"); void $("cardRanking").offsetWidth; $("cardRanking").classList.add("anim-fadein");
+};
+document.querySelectorAll(".rk-metric-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".rk-metric-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    RANKING_METRIC = btn.dataset.metric;
+    renderRanking();
+  });
+});
+["estab","tipo","modo"].forEach(id=>{
+  $(id).addEventListener("change",()=>{ refreshCascada(); render(); });
+});
+$("prest").addEventListener("input",()=>render());
+
+function actualizarBotonLimpiarBusqueda(){
+  $("profSearchClear").style.display = $("profSearch").value.trim() ? "block" : "none";
+}
+$("profSearchClear").onclick = ()=>{
+  $("profSearch").value="";
+  $("profSearch").dispatchEvent(new Event("input"));
+  $("profSearch").focus();
+};
+
+$("profSearch").addEventListener("input",()=>{
+  actualizarBotonLimpiarBusqueda();
+  const q=$("profSearch").value.trim().toLowerCase();
+  if(!q){
+    PROF_SELECTED_FULL="";
+    $("profHits").textContent="";
+    refreshCascada(); render(); return;
+  }
+  const hits = PROF_FULL_LIST
+    .filter(f=>f.toLowerCase().includes(q)||(PROF_FULL_TO_LABEL.get(f)||"").toLowerCase().includes(q))
+    .slice(0,25);
+  if(hits.length===1) PROF_SELECTED_FULL=hits[0];
+  else PROF_SELECTED_FULL="";
+  $("profHits").innerHTML = hits.map(f=>{
+    const lbl=esc(PROF_FULL_TO_LABEL.get(f)||f);
+    return `<span class="badge" style="margin:2px;cursor:pointer" onclick="selectProf('${esc(f)}')">${lbl}</span>`;
+  }).join(" ");
+  render();
+});
+
+$("btnCargarAnio").onclick = async ()=>{
+  await cargarAnio(true);
+  await cargarTotalesPorAnios(true);
+  renderAnual();
+  renderTotalesPorAnios();
+};
+
+/* ══════════════════════════════════════════
+   CARGA MANIFEST + AUTO
+══════════════════════════════════════════ */
+async function cargarManifestYAuto(){
+  const r = await fetch("data/manifest.json?ts="+Date.now());
+  const m = await r.json();
+  MANIFEST = m;
+
+  /* ── Fechas en el header ── */
+  const ahora = new Date();
+  const pad = n=>String(n).padStart(2,"0");
+  const fechaAhora = `${pad(ahora.getDate())}/${pad(ahora.getMonth()+1)}/${ahora.getFullYear()} `
+    + `${ahora.getHours()%12||12}:${pad(ahora.getMinutes())} ${ahora.getHours()>=12?"PM":"AM"}`;
+  $("fechaActualizacion").textContent = `Actualizado: ${fechaAhora}`;
+  $("fechaDigitacion").textContent    = `Fecha de digitación al: ${formatFecha(m.generado||"")}`;
+  $("printFechaFooter").textContent   = `Actualizado: ${fechaAhora} | Digitación al: ${formatFecha(m.generado||"")}`;
+
+  /* ── Selects año/mes ── */
+  const years = [...new Set(m.disponibles.map(x=>x.anio))].sort((a,b)=>a-b);
+  $("anio").innerHTML = years.map(y=>`<option value="${y}">${y}</option>`).join("");
+
+  const fillMes = ()=>{
+    const y = Number($("anio").value);
+    const ms = m.disponibles.filter(x=>x.anio===y).map(x=>x.mes).sort((a,b)=>a-b);
+    $("mes").innerHTML = ms.map(mm=>{
+      const name=MONTHS.find(k=>k.n===mm)?.t||mm;
+      return `<option value="${mm}">${name}</option>`;
+    }).join("");
+  };
+
+  $("anio").addEventListener("change", async ()=>{
+    fillMes();
+    await cargarMes(); await cargarMesAnterior(); refreshCascada(); render();
+    await cargarAnio(true); await cargarTotalesPorAnios(true);
+    renderAnual(); renderTotalesPorAnios();
+  });
+  $("mes").addEventListener("change", async ()=>{
+    await cargarMes(); await cargarMesAnterior(); refreshCascada(); render();
+  });
+
+  $("anio").value = m.ultimo.anio;
+  fillMes();
+  $("mes").value = m.ultimo.mes;
+
+  await cargarMes(); await cargarMesAnterior(); refreshCascada(); render();
+  await cargarAnio(); await cargarTotalesPorAnios();
+  renderAnual(); renderTotalesPorAnios();
+}
+
+/* ══════════════════════════════════════════
+   CARGA MES
+══════════════════════════════════════════ */
+async function cargarMes(){
+  const anio=$("anio").value, mes=$("mes").value;
+  const file=`data/base_${anio}_${String(mes).padStart(2,"0")}.json`;
+  $("estado").textContent=`Cargando ${anio}-${String(mes).padStart(2,"0")}…`;
+  mostrarEsqueletoKPIs();
+  const r=await fetch(file+"?ts="+Date.now());
+  BASE=await r.json();
+  for(const x of BASE) x.dni_prof=canonDNI(x.dni_prof);
+  $("estado").textContent=`Base lista: ${BASE.length.toLocaleString()} registros (${anio}-${String(mes).padStart(2,"0")})`;
+}
+
+/* ══════════════════════════════════════════
+   CARGA MES ANTERIOR (para tendencia)
+══════════════════════════════════════════ */
+async function cargarMesAnterior(){
+  PREV_BASE = [];
+  if(!MANIFEST) return;
+  let anio=Number($("anio").value), mes=Number($("mes").value);
+  mes -= 1;
+  if(mes<1){ mes=12; anio-=1; }
+  const existe = MANIFEST.disponibles.some(x=>x.anio===anio && x.mes===mes);
+  if(!existe) return;
+  const file=`data/base_${anio}_${String(mes).padStart(2,"0")}.json`;
+  try{
+    const r=await fetch(file+"?ts="+Date.now());
+    const d=await r.json();
+    for(const x of d) x.dni_prof=canonDNI(x.dni_prof);
+    PREV_BASE = Array.isArray(d) ? d : [];
+  }catch(e){ PREV_BASE = []; }
+}
+
+/* ══════════════════════════════════════════
+   CARGA ANUAL
+══════════════════════════════════════════ */
+async function cargarAnio(forzar=false){
+  if(!MANIFEST) return;
+  const anio=Number($("anio").value);
+  if(!forzar && YEAR_CACHE.has(anio)) return;
+  $("estado").textContent=`Cargando año ${anio}…`;
+  const meses=MANIFEST.disponibles.filter(x=>x.anio===anio).map(x=>x.mes).sort((a,b)=>a-b);
+  const tot={};
+  for(const mes of meses){
+    const file=`data/base_${anio}_${String(mes).padStart(2,"0")}.json`;
+    try{ const r=await fetch(file+"?ts="+Date.now()); const d=await r.json(); tot[mes]=Array.isArray(d)?d.length:0; }
+    catch(e){ tot[mes]=0; }
+  }
+  YEAR_CACHE.set(anio,tot);
+  $("estado").textContent=`Año ${anio} cargado`;
+}
+
+function renderAnual(){
+  const anio=Number($("anio").value);
+  const tot=YEAR_CACHE.get(anio)||{};
+  const labels=MONTHS.map(m=>m.t);
+  const data=MONTHS.map(m=>Number(tot[m.n]||0));
+  const total=data.reduce((a,b)=>a+b,0);
+  $("kpiAnual").textContent=`Total anual ${anio}: ${total.toLocaleString()}`;
+  if(chartAnioMes) chartAnioMes.destroy();
+  chartAnioMes=new Chart($("c_anio_mes"),{
+    type:"bar",
+    data:{ labels, datasets:[{ label:"Registros", data,
+      backgroundColor: data.map((_,i)=>`rgba(15,42,92,${0.55+0.45*(i/11)})`),
+      borderRadius:5, borderSkipped:false
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false, layout:{padding:{top:14}},
+      plugins:{ legend:{display:false} },
+      scales:{ x:{grid:{display:false}}, y:{grid:{color:"#EDEAE0"}} }
+    },
+    plugins:[valueLabelPlugin]
+  });
+}
+
+/* ══════════════════════════════════════════
+   TOTALES POR AÑO
+══════════════════════════════════════════ */
+async function cargarTotalesPorAnios(forzar=false){
+  if(!MANIFEST) return;
+  const years=[...new Set(MANIFEST.disponibles.map(x=>x.anio))].sort((a,b)=>a-b);
+  if(!forzar){ let ok=true; for(const y of years) if(!YEARS_TOTAL_CACHE.has(y)){ok=false;break;} if(ok) return; }
+  $("estado").textContent="Cargando totales por año…";
+  for(const y of years){
+    if(!forzar && YEARS_TOTAL_CACHE.has(y)) continue;
+    const meses=MANIFEST.disponibles.filter(x=>x.anio===y).map(x=>x.mes);
+    let total=0;
+    for(const mes of meses){
+      const file=`data/base_${y}_${String(mes).padStart(2,"0")}.json`;
+      try{ const r=await fetch(file+"?ts="+Date.now()); const d=await r.json(); total+=Array.isArray(d)?d.length:0; }catch(e){}
+    }
+    YEARS_TOTAL_CACHE.set(y,total);
+  }
+  $("estado").textContent="Totales por año listos";
+}
+
+function renderTotalesPorAnios(){
+  if(!MANIFEST) return;
+  const years=[...new Set(MANIFEST.disponibles.map(x=>x.anio))].sort((a,b)=>a-b);
+  const labels=years.map(String);
+  const data=years.map(y=>Number(YEARS_TOTAL_CACHE.get(y)||0));
+  if(chartYearsTotal) chartYearsTotal.destroy();
+  chartYearsTotal=new Chart($("c_years_total"),{
+    type:"bar",
+    data:{ labels, datasets:[{ label:"Total anual", data,
+      backgroundColor:["#E49C30","#1B4A6E","#6D4FC2","#0E9F6E"].slice(0,years.length),
+      borderRadius:6, borderSkipped:false
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false, layout:{padding:{top:14}},
+      plugins:{ legend:{display:false} },
+      scales:{ x:{grid:{display:false}}, y:{grid:{color:"#EDEAE0"}} }
+    },
+    plugins:[valueLabelPlugin]
+  });
+}
+
+/* ══════════════════════════════════════════
+   CASCADA (sin DNI)
+══════════════════════════════════════════ */
+function refreshCascada(){
+  const estabSel=unesc($("estab").value);
+  const tipoSel=unesc($("tipo").value);
+  let d=BASE;
+  if(estabSel) d=d.filter(x=>x.establecimiento===estabSel);
+  if(tipoSel)  d=d.filter(x=>x.tipo_profesional===tipoSel);
+  const estabs=[...new Set(d.map(x=>x.establecimiento).filter(Boolean))].sort();
+  const tipos=[...new Set(d.map(x=>x.tipo_profesional).filter(Boolean))].sort();
+  $("estab").innerHTML=`<option value="">Todos</option>`+estabs.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
+  $("tipo").innerHTML=`<option value="">Todos</option>`+tipos.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join("");
+  const profSet=new Set(d.map(x=>x.profesional).filter(Boolean));
+  PROF_FULL_LIST=[...profSet].sort((a,b)=>a.localeCompare(b,"es"));
+  PROF_FULL_TO_LABEL.clear(); PROF_LABEL_TO_FULL.clear();
+  for(const full of PROF_FULL_LIST){
+    const lbl=labelConfidencial(full);
+    PROF_FULL_TO_LABEL.set(full,lbl);
+    if(!PROF_LABEL_TO_FULL.has(lbl)) PROF_LABEL_TO_FULL.set(lbl,full);
+  }
+  if(estabSel) $("estab").value=esc(estabSel);
+  if(tipoSel)  $("tipo").value=esc(tipoSel);
+}
+
+/* ══════════════════════════════════════════
+   FILTROS TEXTO (para impresión)
+══════════════════════════════════════════ */
+function filtrosTexto(){
+  const anio=$("anio").value, mes=$("mes").value;
+  const mesName=MONTHS.find(x=>String(x.n)===String(mes))?.t||mes;
+  const tipo=$("tipo").value?`Tipo: ${unesc($("tipo").value)}`:"Tipo: Todos";
+  const prest=$("prest").value.trim()?`Prestación: ${$("prest").value.trim()}`:"Prestación: —";
+  return `Periodo: ${anio} — ${mesName}  |  ${tipo}  |  ${prest}`;
+}
+
+function aplicarFiltrosA(dataset){
+  const estab=unesc($("estab").value);
+  const tipo=unesc($("tipo").value);
+  const prest=$("prest").value.trim().toLowerCase();
+  let d=dataset;
+  if(estab) d=d.filter(x=>x.establecimiento===estab);
+  if(tipo)  d=d.filter(x=>x.tipo_profesional===tipo);
+  const profFull=(PROF_SELECTED_FULL||"").trim();
+  if(profFull) d=d.filter(x=>x.profesional===profFull);
+  if(prest) d=d.filter(x=>String(x.servicio||"").toLowerCase().includes(prest)||String(x.id_servicio||"").toLowerCase().includes(prest));
+  return d;
+}
+function aplicarFiltros(){ return aplicarFiltrosA(BASE); }
+
+/* Tendencia global (total filtrado actual vs. mismo filtro en el mes anterior) */
+function calcularTendenciaGlobal(dFiltradoActual){
+  if(!PREV_BASE.length) return null;
+  const prevFiltrado = aplicarFiltrosA(PREV_BASE);
+  const prevTotal = prevFiltrado.length;
+  if(prevTotal===0) return null;
+  const delta = dFiltradoActual.length - prevTotal;
+  const pct = Math.round((delta/prevTotal)*100);
+  return {delta,pct,prevTotal};
+}
+
+/* ══════════════════════════════════════════
+   RENDER PRINCIPAL
+══════════════════════════════════════════ */
+function render(){
+  if(!BASE.length) return;
+  ocultarEsqueletoKPIs();
+  $("printSub").textContent=filtrosTexto();
+  $("printFechas").textContent=$("fechaActualizacion").textContent+" | "+$("fechaDigitacion").textContent;
+  actualizarBannerFiltro();
+  const d=aplicarFiltros();
+  const anio=$("anio").value, mes=$("mes").value;
+  const nDias=diasEnMes(anio,mes);
+  actualizarKPIs(d, nDias);
+  const stats=renderMatrizPersonal(d,nDias);
+  actualizarKPIsCumplimiento(stats, d);
+  renderMatrizEESS(d,nDias);
+  renderRanking();
+  renderCharts(d);
+}
+
+/* Banner destacado de impresión: qué EESS y qué profesional se está viendo */
+const ICON_BUILDING = `<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="10" height="13" rx="1"/><line x1="9" y1="6.5" x2="9" y2="10.5"/><line x1="7" y1="8.5" x2="11" y2="8.5"/><line x1="4" y1="16" x2="14" y2="16"/></svg>`;
+const ICON_USER = `<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3.5 15.5c0-3.3 2.5-5.3 5.5-5.3s5.5 2 5.5 5.3"/></svg>`;
+
+/* Un profesional puede tener producción en más de un EESS en el mismo mes.
+   Se calcula sobre TODA su producción (sin aplicar el filtro de EESS),
+   para que el reporte impreso de esa persona nunca oculte una sede. */
+function desgloseEstablecimientosPersonal(){
+  if(!PROF_SELECTED_FULL) return [];
+  const map=new Map();
+  for(const r of BASE){
+    if(r.profesional!==PROF_SELECTED_FULL) continue;
+    const k=r.establecimiento||"SIN EESS";
+    map.set(k,(map.get(k)||0)+1);
+  }
+  return [...map.entries()].sort((a,b)=>b[1]-a[1]);
+}
+
+function actualizarBannerFiltro(){
+  const estab = $("estab").value ? unesc($("estab").value) : "";
+  const profLabel = PROF_SELECTED_FULL
+    ? (PROF_FULL_TO_LABEL.get(PROF_SELECTED_FULL) || labelConfidencial(PROF_SELECTED_FULL))
+    : "";
+
+  const estabHtml = estab
+    ? `<span class="pf-value">${esc(estab)}</span>`
+    : `<span class="pf-value pf-todos">Todos los establecimientos</span>`;
+  const profHtml = profLabel
+    ? `<span class="pf-value">${esc(profLabel)}</span>`
+    : `<span class="pf-value pf-todos">Todos los profesionales</span>`;
+
+  let desgloseHtml="";
+  const desglose=desgloseEstablecimientosPersonal();
+  if(desglose.length>1){
+    desgloseHtml=`<div class="pf-desglose"><b>Produjo en ${desglose.length} establecimientos este mes:</b> `
+      + desglose.map(([e,c])=>`${esc(e)} (${c})`).join(" · ") + `</div>`;
+  }
+
+  $("printFiltroBanner").innerHTML = `
+    <div class="pf-item">${ICON_BUILDING}<div class="pf-tx"><span class="pf-label">Establecimiento</span>${estabHtml}</div></div>
+    <div class="pf-item">${ICON_USER}<div class="pf-tx"><span class="pf-label">Personal</span>${profHtml}</div></div>
+    ${desgloseHtml}
+  `;
+}
+
+/* ── Números animados (count-up), respeta "reducir movimiento" ── */
+function animateNumber(el, endVal, opts={}){
+  const {duration=650, prefix="", suffix=""} = opts;
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const startVal = Number(el.dataset.rawVal||0);
+  el.dataset.rawVal = endVal;
+  if(reduce || !isFinite(startVal) || startVal===endVal){
+    el.textContent = `${prefix}${Math.round(endVal).toLocaleString()}${suffix}`;
+    return;
+  }
+  const t0 = performance.now();
+  function tick(now){
+    const p = Math.min(1, (now-t0)/duration);
+    const eased = 1-Math.pow(1-p,3);
+    const current = Math.round(startVal + (endVal-startVal)*eased);
+    el.textContent = `${prefix}${current.toLocaleString()}${suffix}`;
+    if(p<1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ── Esqueleto de carga (mientras se descarga el mes) ── */
+const KPI_IDS = ["kpiTotal","kpiProfs","kpiEESS","kpiProm","kpiCumplimiento","kpiAlertas","kpiTendencia"];
+function mostrarEsqueletoKPIs(){
+  KPI_IDS.forEach(id=>$(id).classList.add("skeleton"));
+}
+function ocultarEsqueletoKPIs(){
+  KPI_IDS.forEach(id=>$(id).classList.remove("skeleton"));
+}
+
+/* ── Anillo de progreso de la tarjeta Cumplimiento ── */
+const RING_CIRC = 2*Math.PI*16; // ≈ 100.53, radio del <circle r="16">
+function actualizarAnilloCumplimiento(pct){
+  const ring = $("kpiCumplRing");
+  if(!ring) return;
+  if(pct==null){
+    ring.style.strokeDashoffset = RING_CIRC;
+    ring.style.stroke = "#CBD5C9";
+    return;
+  }
+  const clamped = Math.max(0, Math.min(100, pct));
+  ring.style.strokeDashoffset = RING_CIRC*(1-clamped/100);
+  ring.style.stroke = pct>UMBRAL_ALTO ? "#DC2626" : (pct>=UMBRAL_BAJO ? "#0E9F6E" : "#D97706");
+}
+
+/* ── KPIs dinámicos ── */
+function actualizarKPIs(d, nDias){
+  animateNumber($("kpiTotal"), d.length);
+  animateNumber($("kpiProfs"), new Set(d.map(x=>x.profesional).filter(Boolean)).size);
+  animateNumber($("kpiEESS"), new Set(d.map(x=>x.establecimiento).filter(Boolean)).size);
+  const prom = nDias>0 ? Math.round(d.length/nDias) : 0;
+  animateNumber($("kpiProm"), prom);
+}
+
+/* ── KPIs de cumplimiento / alertas / tendencia ── */
+function actualizarKPIsCumplimiento(stats, dFiltrado){
+  if(stats.cumplPromedio!=null){
+    animateNumber($("kpiCumplimiento"), stats.cumplPromedio, {suffix:"%"});
+  } else {
+    $("kpiCumplimiento").textContent="—"; $("kpiCumplimiento").dataset.rawVal=0;
+  }
+  actualizarAnilloCumplimiento(stats.cumplPromedio);
+
+  animateNumber($("kpiAlertas"), stats.alertas);
+
+  const tend = calcularTendenciaGlobal(dFiltrado);
+  const elVal = $("kpiTendencia"), elSub=$("kpiTendenciaSub");
+  if(!tend){
+    elVal.textContent="—"; elVal.style.color=""; elVal.dataset.rawVal=0;
+    elSub.textContent="Sin datos del mes anterior";
+  } else {
+    const signo = tend.delta>0?"▲":(tend.delta<0?"▼":"▬");
+    const color = tend.delta>0?"#059669":(tend.delta<0?"#dc2626":"#94a3b8");
+    elVal.style.color = color;
+    animateNumber(elVal, Math.abs(tend.pct), {prefix:`${signo} `, suffix:"%"});
+    elSub.textContent = `${dFiltrado.length.toLocaleString()} vs ${tend.prevTotal.toLocaleString()} (mes anterior)`;
+  }
+}
+
+/* ══════════════════════════════════════════
+   MATRIZ PERSONAL con heatmap
+══════════════════════════════════════════ */
+function renderMatrizPersonal(d, nDias){
+  const days=Array.from({length:nDias},(_,i)=>i+1);
+  const modo=$("modo").value;
+  const map=new Map();
+
+  function makeKey(r){
+    const e=r.establecimiento||"SIN EESS";
+    const p=r.profesional||"SIN PROFESIONAL";
+    const t=r.tipo_profesional||"SIN TIPO";
+    if(modo==="resumen") return ["__ALL__",p,t].join("||");
+    return [e,p,t].join("||");
+  }
+
+  for(const r of d){
+    const k=makeKey(r);
+    if(!map.has(k)) map.set(k,{
+      establecimiento:(modo==="resumen")?"TODOS":(r.establecimiento||"SIN EESS"),
+      profesional:r.profesional||"SIN PROFESIONAL",
+      profesion:r.tipo_profesional||"SIN TIPO",
+      dd:Object.fromEntries(days.map(x=>[x,0])),
+      total:0
+    });
+    const obj=map.get(k);
+    const dia=Number(r.dia)||0;
+    if(dia>=1&&dia<=nDias){ obj.dd[dia]+=1; obj.total+=1; }
+  }
+
+  const rows=[...map.values()].sort((a,b)=>b.total-a.total);
+
+  /* umbral heatmap */
+  const allVals=rows.flatMap(r=>days.map(d=>r.dd[d]||0)).filter(v=>v>0);
+  const maxVal=allVals.length?Math.max(...allVals):1;
+  const medVal=maxVal*0.45;
+  const lowVal=maxVal*0.1;
+
+  function cellClass(v){
+    if(!v) return "";
+    if(v>=medVal) return "c-hot";
+    if(v>=lowVal) return "c-med";
+    return "c-low";
+  }
+
+  /* Totales del mes anterior por profesional (mismos filtros de EESS/tipo/prestación) */
+  const prevPorProf=new Map();
+  if(PREV_BASE.length){
+    for(const x of aplicarFiltrosA(PREV_BASE)){
+      const p=x.profesional||"SIN PROFESIONAL";
+      prevPorProf.set(p,(prevPorProf.get(p)||0)+1);
+    }
+  }
+
+  let totalAlertas=0, sumCumpl=0, nCumpl=0;
+
+  let html=`<thead><tr>
+    <th class="left sticky-col th-eess" style="--sticky-left:0">ESTABLECIMIENTO</th>
+    <th class="left sticky-col th-prof sticky-last" style="--sticky-left:150px">PERSONAL (CONFIDENCIAL)</th>
+    <th class="left">PROFESIÓN</th>
+    ${days.map(x=>`<th class="th-day">${x}</th>`).join("")}
+    <th class="th-total">TOTAL</th>
+    <th class="th-total" title="Promedio calculado solo sobre días con al menos 1 registro">PROM/DÍA</th>
+    <th class="th-total">ESTÁNDAR</th>
+    <th class="th-total">% CUMPL.</th>
+    <th class="th-total">TENDENCIA</th>
+  </tr></thead><tbody>`;
+
+  if(rows.length===0){
+    const colspan = 8 + days.length;
+    html += `<tr><td colspan="${colspan}" style="padding:26px 10px;text-align:center">
+      <div style="display:inline-flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted)">
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/></svg>
+        <div style="font-family:var(--f-cuerpo);font-size:12px">No hay registros para estos filtros. Prueba quitando alguno (EESS, tipo, profesional o prestación).</div>
+      </div>
+    </td></tr>`;
+  }
+
+  for(const r of rows){
+    const estandar=getEstandar(r.profesion);
+    const diasConReg=days.filter(dy=>(r.dd[dy]||0)>0).length;
+    const promDia=diasConReg>0 ? r.total/diasConReg : 0;
+
+    let badgeClass="badge-neutral", badgeTxt="Sin estándar";
+    if(estandar){
+      const cumplPct=Math.round((promDia/estandar)*100);
+      sumCumpl+=cumplPct; nCumpl++;
+      if(cumplPct>UMBRAL_ALTO){ badgeClass="badge-bad"; badgeTxt=`${cumplPct}% ⚠`; }
+      else if(cumplPct>=UMBRAL_BAJO){ badgeClass="badge-ok"; badgeTxt=`${cumplPct}%`; }
+      else{ badgeClass="badge-warn"; badgeTxt=`${cumplPct}%`; }
+    }
+
+    const celdas=days.map(dy=>{
+      const v=r.dd[dy]||0;
+      let cls=cellClass(v);
+      if(estandar && v>estandar){ cls="c-alert"; totalAlertas++; }
+      cls = cls ? `td-num ${cls}` : "td-num";
+      return `<td class="${cls}">${v||""}</td>`;
+    }).join("");
+
+    const prevTotal=prevPorProf.get(r.profesional);
+    let tendHtml=`<span class="tendencia-flat">—</span>`;
+    if(prevTotal!==undefined && prevTotal>0){
+      const delta=r.total-prevTotal;
+      const pct=Math.round((delta/prevTotal)*100);
+      if(delta>0) tendHtml=`<span class="tendencia-up">▲ ${pct}%</span>`;
+      else if(delta<0) tendHtml=`<span class="tendencia-down">▼ ${Math.abs(pct)}%</span>`;
+      else tendHtml=`<span class="tendencia-flat">▬ 0%</span>`;
+    }
+
+    html+=`<tr>
+      <td class="td-eess sticky-col" style="--sticky-left:0">${esc(r.establecimiento)}</td>
+      <td class="td-prof sticky-col sticky-last" style="--sticky-left:150px">${esc(labelConfidencial(r.profesional))}</td>
+      <td class="td-prof-tipo">${esc(r.profesion)}</td>
+      ${celdas}
+      <td class="td-total">${r.total}</td>
+      <td class="td-num">${promDia.toFixed(1)}</td>
+      <td class="td-num">${estandar??"—"}</td>
+      <td><span class="badge-cumpl ${badgeClass}">${badgeTxt}</span></td>
+      <td>${tendHtml}</td>
+    </tr>`;
+  }
+  html+="</tbody>";
+
+  $("matrizPersonal").innerHTML=html;
+
+  return{
+    alertas: totalAlertas,
+    cumplPromedio: nCumpl ? Math.round(sumCumpl/nCumpl) : null
+  };
+}
+
+/* ══════════════════════════════════════════
+   MATRIZ EESS
+══════════════════════════════════════════ */
+function renderMatrizEESS(d,nDias){
+  const days=Array.from({length:nDias},(_,i)=>i+1);
+  const map=new Map();
+  for(const r of d){
+    const k=r.establecimiento||"SIN EESS";
+    if(!map.has(k)) map.set(k,{dd:Object.fromEntries(days.map(x=>[x,0])),total:0});
+    const obj=map.get(k);
+    const dia=Number(r.dia)||0;
+    if(dia>=1&&dia<=nDias){ obj.dd[dia]+=1; obj.total+=1; }
+  }
+  const rows=[...map.entries()].map(([k,v])=>({k,...v})).sort((a,b)=>b.total-a.total);
+  let html=`<thead><tr><th class="left sticky-col th-eess" style="--sticky-left:0">EESS</th>${days.map(x=>`<th class="th-day">${x}</th>`).join("")}<th class="th-total">TOTAL</th></tr></thead><tbody>`;
+  if(rows.length===0){
+    html += `<tr><td colspan="${2+days.length}" style="padding:26px 10px;text-align:center">
+      <div style="display:inline-flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted)">
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/></svg>
+        <div style="font-family:var(--f-cuerpo);font-size:12px">No hay registros para estos filtros.</div>
+      </div>
+    </td></tr>`;
+  }
+  for(const r of rows){
+    html+=`<tr>
+      <td class="td-eess sticky-col sticky-last" style="--sticky-left:0">${esc(r.k)}</td>
+      ${days.map(dy=>`<td class="td-num">${r.dd[dy]||""}</td>`).join("")}
+      <td class="td-total">${r.total}</td>
+    </tr>`;
+  }
+  html+="</tbody>";
+  $("matrizEESS").innerHTML=html;
+}
+
+/* ══════════════════════════════════════════
+   RANKING DE PRODUCCIÓN (Personal de Salud)
+══════════════════════════════════════════ */
+let RANKING_METRIC = "cumpl"; // 'cumpl' | 'total' | 'promedio'
+
+function computeRanking(d, nDias){
+  const map = new Map();
+  for(const r of d){
+    const p = (r.profesional||"").trim();
+    if(!p || p.toUpperCase()==="SIN PROFESIONAL") continue;
+    const t = r.tipo_profesional || "SIN TIPO";
+    const key = p+"||"+t;
+    if(!map.has(key)) map.set(key,{
+      profesional:p, profesion:t,
+      dd:Object.fromEntries(Array.from({length:nDias},(_,i)=>[i+1,0])),
+      total:0
+    });
+    const obj = map.get(key);
+    const dia = Number(r.dia)||0;
+    if(dia>=1 && dia<=nDias){ obj.dd[dia]+=1; obj.total+=1; }
+  }
+  return [...map.values()].map(r=>{
+    const diasConReg = Object.values(r.dd).filter(v=>v>0).length;
+    const promDia = diasConReg>0 ? r.total/diasConReg : 0;
+    const estandar = getEstandar(r.profesion);
+    const cumplPct = estandar ? Math.round((promDia/estandar)*100) : null;
+    return {...r, diasConReg, promDia, estandar, cumplPct};
+  });
+}
+
+function ordenarRanking(rows, metric){
+  const arr=[...rows];
+  if(metric==="total") arr.sort((a,b)=>b.total-a.total);
+  else if(metric==="promedio") arr.sort((a,b)=>b.promDia-a.promDia);
+  else arr.sort((a,b)=>{
+    const av=a.cumplPct==null?-1:a.cumplPct, bv=b.cumplPct==null?-1:b.cumplPct;
+    if(bv!==av) return bv-av;
+    return b.total-a.total; // desempate
+  });
+  return arr;
+}
+
+function valorRanking(r, metric){
+  if(metric==="total") return String(r.total);
+  if(metric==="promedio") return r.promDia.toFixed(1);
+  return r.cumplPct==null ? "—" : r.cumplPct+"%";
+}
+
+function mensajeAliento(pos, r){
+  if(pos===1) return "🏆 ¡Felicidades! Lidera la producción de este periodo.";
+  if(pos===2) return "🥈 ¡Muy cerca del primer lugar, sigue así!";
+  if(pos===3) return "🥉 ¡Excelente ubicación, un empujón más!";
+  if(r.cumplPct!=null && r.cumplPct>=UMBRAL_ALTO) return "⚠ Muy por encima del estándar, revisa el registro.";
+  if(r.cumplPct!=null && r.cumplPct>=100) return "🔥 Excelente ritmo de producción.";
+  if(r.cumplPct!=null && r.cumplPct>=UMBRAL_BAJO) return "👍 Buen avance, continúa así.";
+  if(r.cumplPct!=null) return "⚡ Puedes mejorar, ¡ánimo!";
+  return "Sin estándar de referencia";
+}
+
+function renderRanking(){
+  const nDias = diasEnMes($("anio").value, $("mes").value);
+  const d = aplicarFiltros();
+  const rows = ordenarRanking(computeRanking(d, nDias), RANKING_METRIC);
+
+  const podioEl = $("rankingPodio");
+  const listaEl = $("rankingLista");
+
+  if(!rows.length){
+    podioEl.innerHTML="";
+    listaEl.innerHTML = `<div class="muted" style="padding:24px 10px;text-align:center">
+      No hay datos suficientes para armar el ranking con estos filtros.
+    </div>`;
+    return;
+  }
+
+  const top3 = rows.slice(0,3);
+  const resto = rows.slice(3);
+  const medalla=["🥇","🥈","🥉"], clase=["rk-gold","rk-silver","rk-bronze"];
+
+  podioEl.innerHTML = top3.map((r,i)=>`
+    <div class="rk-podio-card ${clase[i]}">
+      <div class="rk-medalla">${medalla[i]}</div>
+      <div class="rk-nombre">${esc(labelConfidencial(r.profesional))}</div>
+      <div class="rk-profesion">${esc(r.profesion)}</div>
+      <div class="rk-valor">${valorRanking(r,RANKING_METRIC)}</div>
+      <div class="rk-sub">Total ${r.total} · Prom/día ${r.promDia.toFixed(1)}${r.estandar?` · Estándar ${r.estandar}/día`:""}</div>
+      <div class="rk-msg">${mensajeAliento(i+1,r)}</div>
+    </div>
+  `).join("");
+
+  listaEl.innerHTML = resto.map((r,i)=>{
+    const pos=i+4;
+    return `
+    <div class="rk-row">
+      <div class="rk-pos">${pos}</div>
+      <div>
+        <div class="rk-info-nombre">${esc(labelConfidencial(r.profesional))}</div>
+        <div class="rk-info-profesion">${esc(r.profesion)}</div>
+      </div>
+      <div class="rk-stats">
+        <span>Total <b>${r.total}</b></span>
+        <span>Prom/día <b>${r.promDia.toFixed(1)}</b></span>
+        <span>Cumpl. <b>${r.cumplPct==null?"—":r.cumplPct+"%"}</b></span>
+      </div>
+      <div class="rk-aliento">${mensajeAliento(pos,r)}</div>
+    </div>`;
+  }).join("");
+}
+
+
+function renderCharts(d){
+  /* EESS */
+  const eCount=new Map();
+  for(const x of d){
+    const k=x.establecimiento||""; if(!k) continue;
+    eCount.set(k,(eCount.get(k)||0)+1);
+  }
+  const topE=[...eCount.entries()].sort((a,b)=>b[1]-a[1]).slice(0,15);
+
+  /* Tipo profesional */
+  const tCount=new Map();
+  for(const x of d){
+    const k=x.tipo_profesional||"SIN DATO";
+    tCount.set(k,(tCount.get(k)||0)+1);
+  }
+  const tArr=[...tCount.entries()].sort((a,b)=>b[1]-a[1]).slice(0,12);
+
+  if(chartEESS) chartEESS.destroy();
+  if(chartTipo)  chartTipo.destroy();
+
+  chartEESS=new Chart($("c_eess"),{
+    type:"bar",
+    data:{ labels:topE.map(x=>x[0]), datasets:[{
+      label:"Registros", data:topE.map(x=>x[1]),
+      backgroundColor: topE.map((_,i)=>{
+        const alpha=0.55+0.45*(i===0?1:(1-i/topE.length));
+        return `rgba(15,42,92,${alpha.toFixed(2)})`;
+      }),
+      borderRadius:5, borderSkipped:false
+    }]},
+    options:{ indexAxis:"y", responsive:true, maintainAspectRatio:false, layout:{padding:{right:34}},
+      plugins:{ legend:{display:false} },
+      scales:{ x:{grid:{color:"#EDEAE0"}}, y:{grid:{display:false},ticks:{font:{size:10}}} }
+    },
+    plugins:[valueLabelPlugin]
+  });
+
+  chartTipo=new Chart($("c_tipo"),{
+    type:"doughnut",
+    data:{ labels:tArr.map(x=>x[0]), datasets:[{
+      data:tArr.map(x=>x[1]),
+      backgroundColor:PALETTE.slice(0,tArr.length),
+      borderWidth:2, borderColor:"#fff", hoverOffset:6
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{position:"right",labels:{font:{size:10},boxWidth:12,padding:8}} }
+    }
+  });
+}
+
+/* ══════════════════════════════════════════
+   IMPRESIÓN — captura gráficos anuales
+══════════════════════════════════════════ */
+function snapChartToImg(cId,iId){
+  const c=document.getElementById(cId), img=document.getElementById(iId);
+  if(!c||!img) return;
+  try{ img.src=c.toDataURL("image/png",1.0); }catch(e){}
+}
+function chipHTML(label,val,color){
+  return `<span style="display:inline-flex;gap:5px;align-items:center;padding:3px 10px;
+    border-radius:999px;background:${color}1a;color:${color};border:1px solid ${color}55;
+    font-size:10px;font-weight:700">${label}: ${val}</span>`;
+}
+let __modoAntesDeImprimir = null;
+window.addEventListener("beforeprint",()=>{
+  snapChartToImg("c_anio_mes","img_c_anio_mes");
+  snapChartToImg("c_years_total","img_c_years_total");
+  $("printKPIs").innerHTML = [
+    chipHTML("Total registros", $("kpiTotal").textContent, "#1B4A6E"),
+    chipHTML("Profesionales", $("kpiProfs").textContent, "#E49C30"),
+    chipHTML("Establecimientos", $("kpiEESS").textContent, "#6D4FC2"),
+    chipHTML("Cumplimiento promedio", $("kpiCumplimiento").textContent, "#0E9F6E"),
+    chipHTML("Alertas", $("kpiAlertas").textContent, "#DC2626")
+  ].join("");
+
+  /* Reporte de UN profesional específico = su comprobante mensual de FUAS.
+     Se oculta el histórico anual (irrelevante para ese informe) y se
+     obliga a mostrar el detalle por establecimiento, aunque el modo
+     en pantalla estuviera en "Resumen (1 fila)". */
+  const esReportePersonal = !!PROF_SELECTED_FULL;
+  document.body.classList.toggle("print-personal", esReportePersonal);
+  if(esReportePersonal && $("modo").value==="resumen"){
+    __modoAntesDeImprimir = $("modo").value;
+    $("modo").value = "auto";
+    render();
+  }
+});
+window.addEventListener("afterprint",()=>{
+  document.body.classList.remove("print-personal");
+  if(__modoAntesDeImprimir){
+    $("modo").value = __modoAntesDeImprimir;
+    __modoAntesDeImprimir = null;
+    render();
+  }
+});
+
+/* ══════════════════════════════════════════
+   INICIO
+══════════════════════════════════════════ */
+cargarManifestYAuto();
+</script>
+</body>
+</html>

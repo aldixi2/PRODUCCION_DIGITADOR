@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>ADMIN - USPP Satipo | Actualizar Base</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.19.3/dist/xlsx.full.min.js"></script>
+
+  <style>
+    body{font-family:Segoe UI,Arial,sans-serif;margin:0;background:#f4f6f8}
+    header{background:#fff;border-bottom:1px solid #ddd;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+    h1{margin:0;font-size:18px}
+    .card{background:#fff;border:1px solid #ddd;border-radius:14px;padding:12px;margin:12px 18px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    button,input{padding:10px 12px;border:1px solid #aaa;background:#fff;border-radius:10px;cursor:pointer}
+    .badge{display:inline-block;padding:2px 10px;border:1px solid #ddd;border-radius:999px;background:#fafafa;font-size:12px;color:#333}
+    .hint{color:#666;font-size:12px;margin-top:6px;line-height:1.35}
+    pre{background:#0b1220;color:#e5e7eb;padding:10px;border-radius:10px;overflow:auto}
+    img{height:44px;object-fit:contain}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="row">
+    <img src="logo.png" alt="USPP Satipo" onerror="this.style.display='none'">
+    <div>
+      <h1>ADMIN — Actualizar base (USPP Satipo)</h1>
+      <span class="badge" id="estado">Listo</span>
+    </div>
+  </div>
+  <div class="row">
+    <button onclick="descargarBase()">⬇️ Descargar base.json</button>
+    <a href="./index.html" style="text-decoration:none"><button>Ver dashboard (personal)</button></a>
+  </div>
+</header>
+
+<div class="card">
+  <b>1) Selecciona tus Excel (varios)</b><br><br>
+  <input type="file" id="excel" accept=".xlsx,.xls" multiple>
+  <div class="hint">
+    • Selecciona tus archivos de <b>D:\ANALISIS DE DATOS\BASE DE DATOS 2026</b> (puedes seleccionar muchos).<br>
+    • Esto consolidará todo y al presionar <b>"Descargar base.json"</b> se descargará un archivo por cada mes
+      (<b>base_AAAA_MM.json</b>) más un <b>manifest.json</b>.<br>
+    • Copia todos esos archivos a <b>C:\xampp\htdocs\dashboard\data\</b> (reemplazando lo anterior) y el personal ya verá todo actualizado.
+  </div>
+</div>
+
+<div class="card">
+  <b>2) Vista rápida</b>
+  <div class="hint">Aquí solo mostramos un resumen para que confirmes que está leyendo bien.</div>
+  <pre id="resumen">Sin datos</pre>
+</div>
+
+<script>
+let BASE = [];     // filas normalizadas
+let META = {};     // info de columnas detectadas
+
+const $ = (id)=>document.getElementById(id);
+
+$("excel").addEventListener("change", async (e)=>{
+  const files = [...e.target.files];
+  if(!files.length) return;
+
+  BASE = [];
+  META = {};
+  $("estado").textContent = `Leyendo ${files.length} Excel…`;
+
+  let headersMuestra = null;
+
+  for (let i=0; i<files.length; i++){
+    const file = files[i];
+    $("estado").textContent = `Leyendo ${i+1}/${files.length}: ${file.name}`;
+
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type:"array" });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, { defval:"" });
+
+    if (!headersMuestra && rows.length){
+      headersMuestra = Object.keys(rows[0]);
+      META.headers = headersMuestra;
+    }
+
+    // Normalizar cada fila a un formato estándar para el dashboard
+    for(const r of rows){
+      const n = normalizarFila(r, file.name);
+      if(n) BASE.push(n);
+    }
+
+    await new Promise(res=>setTimeout(res, 10));
+  }
+
+  $("estado").textContent = `Listo: ${BASE.length} registros`;
+  renderResumen(files.length);
+});
+
+function pick(r, posibles){
+  for(const k of posibles){
+    if (r[k] !== undefined && String(r[k]).trim() !== "") return r[k];
+  }
+  return "";
+}
+
+function soloDigitos(v){
+  return String(v==null?"":v).replace(/\D/g,"");
+}
+
+function normalizarFila(r, sourceName){
+  // 👇 Nombres reales del export SIS (RAtenDet) como primera opción, con variantes de respaldo
+  const fechaRaw   = pick(r, ["Fecha Atencion","Fecha Atención","FECHA","Fecha","FEC_ATEN","F_ATENCION"]);
+  const estab      = String(pick(r, ["EESS","Establecimiento","ESTABLECIMIENTO","Establecimiento de Salud","Nombre del Establecimiento","EE.SS"])).trim();
+  const dniProf    = String(pick(r, ["DNI Resp. Aten.","DNI Resp Aten","DNI Responsable","DNI del Profesional","DNI PROFESIONAL"])).trim();
+  const prof       = String(pick(r, ["Profesional","PROFESIONAL","Nombres Profesional","Nombre del Profesional"])).trim();
+  const tipo       = String(pick(r, ["Tipo Profesional","TIPO PROFESIONAL","Tipo_Profesional"])).trim();
+  const servicio   = String(pick(r, ["Servicio"," Servicio","SERVICIO","Prestación","Prestacion","Procedimiento"])).trim();
+  const idServicio = String(pick(r, ["ID Servicio","ID SERVICIO","IDServicio","CPMS"])).trim();
+
+  const digitadorRaw = pick(r, ["Digitador","DIGITADOR","Usuario Digitador","Usuario Registro"]);
+  const fechaRegRaw   = pick(r, ["Fecha Registro","Fecha de Registro","FECHA REGISTRO"]);
+  const horaRegRaw    = pick(r, ["Hora Registro","Hora de Registro","HORA REGISTRO"]);
+
+  const f = parseFecha(fechaRaw);
+  if(!f || !estab) return null;
+
+  const fr = parseFecha(fechaRegRaw);
+  const hr = parseHora(horaRegRaw);
+
+  return {
+    anio: f.y, mes: f.m, dia: f.d, fecha: f.iso,
+    establecimiento: estab,
+    profesional: prof,
+    tipo_profesional: tipo,
+    dni_prof: soloDigitos(dniProf),
+    servicio: servicio,
+    id_servicio: idServicio,
+    digitador_dni: soloDigitos(digitadorRaw),
+    fecha_registro: fr ? fr.iso : "",
+    anio_registro: fr ? fr.y : null,
+    mes_registro: fr ? fr.m : null,
+    dia_registro: fr ? fr.d : null,
+    hora_registro: hr,
+    source: sourceName
+  };
+}
+
+function parseHora(v){
+  if(v===null || v===undefined || v==="") return "";
+  if(typeof v === "number"){
+    const totalMin = Math.round(v*24*60);
+    const hh = Math.floor(totalMin/60)%24, mm = totalMin%60;
+    return String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0");
+  }
+  const s = String(v).trim();
+  const m = s.match(/^(\d{1,2}):(\d{2})/);
+  if(m) return String(parseInt(m[1],10)%24).padStart(2,"0")+":"+m[2];
+  return "";
+}
+
+function parseFecha(v){
+  if(!v) return null;
+
+  // fecha serial de Excel
+  if(typeof v === "number"){
+    const d = XLSX.SSF.parse_date_code(v);
+    if(!d) return null;
+    return { y:d.y, m:d.m, d:d.d, iso: `${d.y}-${String(d.m).padStart(2,"0")}-${String(d.d).padStart(2,"0")}` };
+  }
+
+  const s = String(v).trim().replaceAll("-", "/");
+  if(!s) return null;
+
+  // dd/mm/yyyy
+  if(s.includes("/")){
+    const p = s.split("/");
+    if(p.length===3){
+      const dd = parseInt(p[0],10), mm=parseInt(p[1],10), yy=parseInt(p[2],10);
+      if(yy>1900 && mm>=1 && mm<=12 && dd>=1 && dd<=31){
+        return { y:yy, m:mm, d:dd, iso:`${yy}-${String(mm).padStart(2,"0")}-${String(dd).padStart(2,"0")}` };
+      }
+    }
+  }
+
+  // yyyy-mm-dd (por si acaso)
+  if(String(v).includes("-")){
+    const q = String(v).split("-");
+    if(q.length>=3){
+      const yy = parseInt(q[0],10), mm=parseInt(q[1],10), dd=parseInt(q[2],10);
+      if(yy>1900) return { y:yy, m:mm, d:dd, iso:`${yy}-${String(mm).padStart(2,"0")}-${String(dd).padStart(2,"0")}` };
+    }
+  }
+
+  return null;
+}
+
+function renderResumen(nFiles){
+  const years = [...new Set(BASE.map(x=>x.anio))].sort((a,b)=>a-b);
+  const meses = [...new Set(BASE.map(x=>x.mes))].sort((a,b)=>a-b);
+  const estabs = [...new Set(BASE.map(x=>x.establecimiento))].slice(0,20);
+
+  $("resumen").textContent =
+`Archivos leídos: ${nFiles}
+Registros consolidados: ${BASE.length}
+
+Años: ${years.join(", ") || "-"}
+Meses: ${meses.join(", ") || "-"}
+Ejemplos de Establecimientos (20): 
+- ${estabs.join("\n- ") || "-"}
+`;
+}
+
+function descargarBase(){
+  if(!BASE.length){
+    alert("Primero carga los Excel.");
+    return;
+  }
+
+  // Agrupar por (año, mes) — igual que consolidar.py — para que calce con
+  // lo que index.html espera leer (manifest.json + base_AAAA_MM.json)
+  const buckets = new Map();
+  for(const r of BASE){
+    const key = r.anio+"_"+String(r.mes).padStart(2,"0");
+    if(!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key).push(r);
+  }
+
+  const disponibles = [];
+  let ultimo = null;
+  const claves = [...buckets.keys()].sort();
+
+  function descargarArchivo(nombre, contenidoObj){
+    const blob = new Blob([JSON.stringify(contenidoObj)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = nombre;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }
+
+  claves.forEach((key, i)=>{
+    const [anio, mesStr] = key.split("_");
+    const mes = parseInt(mesStr,10);
+    const fileName = `base_${anio}_${mesStr}.json`;
+    disponibles.push({anio:parseInt(anio,10), mes, file: fileName});
+    ultimo = {anio:parseInt(anio,10), mes};
+    // pequeño retraso entre descargas para que el navegador no las bloquee
+    setTimeout(()=>descargarArchivo(fileName, buckets.get(key)), i*250);
+  });
+
+  const manifest = {
+    disponibles,
+    ultimo: ultimo || {anio:0, mes:0},
+    generado: new Date().toISOString().slice(0,19).replace("T"," "),
+    origen: "Cargado desde el navegador (admin.html)"
+  };
+  setTimeout(()=>descargarArchivo("manifest.json", manifest), claves.length*250 + 250);
+
+  alert(`Se descargarán ${claves.length} archivo(s) mensual(es) + manifest.json.\nMuévelos todos a la carpeta "data" del dashboard (reemplazando lo anterior).`);
+}
+</script>
+
+</body>
+</html>

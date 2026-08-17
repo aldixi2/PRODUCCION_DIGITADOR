@@ -1,0 +1,237 @@
+{
+  "_instrucciones": "Mapeo DNI -> datos del digitador, generado desde DIGITADORES-TERCEROS_2026.xlsx. Para agregar o corregir a alguien, edita este archivo directamente (no hace falta tocar código) y recarga digitador.html.",
+  "71706105": {
+    "nombre": "EDITH NOYA MEZA",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "CENTRO DE SALUD MENTAL COMUNITARIO PUERTO OCOPA",
+    "contrato": "CAS"
+  },
+  "46802770": {
+    "nombre": "KELLY CARBAJAL CONDORI",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "CENTRO DE SALUD MENTAL COMUNITARIO SATIPO",
+    "contrato": "NOMBRADO"
+  },
+  "73389453": {
+    "nombre": "DANNY LUIS ALIAGA MEZA",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "COVIRIALI",
+    "contrato": "CAS"
+  },
+  "71584283": {
+    "nombre": "BARRIENTOS MALLMA KATHERYN SHARLEYNI",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "COVIRIALI_MARIPOSA",
+    "contrato": "TERCERO"
+  },
+  "21143977": {
+    "nombre": "VASQUEZ PIZANGO WATKLING",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "COVIRIALI_MARIPOSA",
+    "contrato": "TERCERO"
+  },
+  "71211609": {
+    "nombre": "ROJAS LEIVA YUDMI ELIZABETH",
+    "cargo": "JEFATURA",
+    "punto_digitacion": "HOSPITAL MAHA",
+    "contrato": "CAS"
+  },
+  "77278124": {
+    "nombre": "ALLCA ANDRADE, YULI SUSANA",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "HOSPITAL MAHA",
+    "contrato": ""
+  },
+  "72866536": {
+    "nombre": "YUPANQUI COCA LISSET SANDY",
+    "cargo": "MEDICO AUDITOR",
+    "punto_digitacion": "HOSPITAL MAHA",
+    "contrato": "TERCERO"
+  },
+  "71721842": {
+    "nombre": "HUARINGA ASCENCIO LUIS ALBERTO",
+    "cargo": "MEDICO AUDITOR",
+    "punto_digitacion": "HOSPITAL MAHA",
+    "contrato": "TERCERO"
+  },
+  "75313037": {
+    "nombre": "PATRIK BORIS VASQUEZ MEDINA",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "HOSPITAL MAHA",
+    "contrato": "TERCERO"
+  },
+  "48031941": {
+    "nombre": "LETICIA MILUZKA GOMEZ",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "HOSPITAL MAHA",
+    "contrato": "TERCERO"
+  },
+  "44324958": {
+    "nombre": "EUNICE HURTADO CHAMORRO",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "HOSPITAL MAHA",
+    "contrato": "CAS"
+  },
+  "46524522": {
+    "nombre": "CASTRO ESPINOZA RANDI NORVIL",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "HOSPITAL MAHA",
+    "contrato": "NOMBRADO"
+  },
+  "73393197": {
+    "nombre": "PALOMINO VARGAS DEYSI",
+    "cargo": "CONVENIOS",
+    "punto_digitacion": "HOSPITAL MAHA",
+    "contrato": "CAS"
+  },
+  "21010672": {
+    "nombre": "ORELLANO RAMOS ROSA ROSALIA",
+    "cargo": "AFILIACION-RECEPCION HC",
+    "punto_digitacion": "HOSPITAL MAHA",
+    "contrato": "NOMBRADO"
+  },
+  "20006750": {
+    "nombre": "CLEMENTE PEREZ MARGARITA LUZ",
+    "cargo": "AFILIACION-RECEPCION HC",
+    "punto_digitacion": "HOSPITAL MAHA",
+    "contrato": "CAS"
+  },
+  "40405570": {
+    "nombre": "PARQUE MEZA ROSA LIDIA",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "HOSPITAL MAHA",
+    "contrato": "TERCERO"
+  },
+  "25835884": {
+    "nombre": "FERRINI NIETO SADITH ROCIO",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "HOSPITAL MAHA",
+    "contrato": "TERCERO"
+  },
+  "47049927": {
+    "nombre": "SUSANA LUZ CHAVEZ CORDOVA",
+    "cargo": "DIGITADOR-JEFATURA",
+    "punto_digitacion": "MAZAMARI",
+    "contrato": "CAS"
+  },
+  "71435743": {
+    "nombre": "HELMS YORDHY BALBIN PERCA",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "MAZAMARI",
+    "contrato": "TERCERO"
+  },
+  "71998960": {
+    "nombre": "MAYELA MARQUINA HUAROC",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "MAZAMARI",
+    "contrato": "TERCERO"
+  },
+  "77239926": {
+    "nombre": "CARDENAS TINCO FANNY ALONDRA",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "MAZAMARI",
+    "contrato": "TERCERO"
+  },
+  "71643166": {
+    "nombre": "CAPCHA ROMERO FRANKLIN",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "MAZAMARI",
+    "contrato": "NOMBRADO"
+  },
+  "60536992": {
+    "nombre": "LARA RAYMUNDO LETICIA NAYELI",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "MAZAMARI",
+    "contrato": "TERCERO"
+  },
+  "72369349": {
+    "nombre": "JIMY SAUL VARGAS VEGA",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "PUERTO OCOPA",
+    "contrato": "TERCERO"
+  },
+  "76513514": {
+    "nombre": "NOE WILMER VILLALOBOS",
+    "cargo": "DIGITADOR-JEFATURA",
+    "punto_digitacion": "PUERTO OCOPA",
+    "contrato": "CAS"
+  },
+  "73256230": {
+    "nombre": "EDWARD VICTOR GOZME GONZALES",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "PUERTO OCOPA",
+    "contrato": "TERCERO"
+  },
+  "45332836": {
+    "nombre": "KARIM SUSSETY FIGUEROA VILLALOBOS",
+    "cargo": "ADMINISTRATIVO",
+    "punto_digitacion": "RED SALUD SATIPO",
+    "contrato": "TERCERO"
+  },
+  "73389329": {
+    "nombre": "SOTO ALANYA HEIDY THALIA",
+    "cargo": "ADMINISTRATIVO",
+    "punto_digitacion": "RED SALUD SATIPO",
+    "contrato": "TERCERO"
+  },
+  "42155248": {
+    "nombre": "CARHUALLANQUI LLANOS ISABEL RUTH",
+    "cargo": "ADMINISTRATIVO",
+    "punto_digitacion": "RED SALUD SATIPO",
+    "contrato": "NOMBRADO"
+  },
+  "21288149": {
+    "nombre": "SANDOVAL GAMION LOURDES LUISA",
+    "cargo": "ADMINISTRATIVO",
+    "punto_digitacion": "RED SALUD SATIPO",
+    "contrato": "NOMBRADO"
+  },
+  "70041846": {
+    "nombre": "PRISCILA VIVIANA RIVERA UCEDA",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "RIO NEGRO",
+    "contrato": "TERCERO"
+  },
+  "80231967": {
+    "nombre": "MIGUEL ANGEL SALAS AQUINO",
+    "cargo": "DIGITADOR-JEFATURA",
+    "punto_digitacion": "RIO NEGRO",
+    "contrato": "NOMBRADO"
+  },
+  "74950952": {
+    "nombre": "BETHZABETH ROMERO FERNANDEZ",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "RIO NEGRO",
+    "contrato": "TERCERO"
+  },
+  "72684349": {
+    "nombre": "ROMAN BECERRA, ARACELY DANIELA",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "RIO NEGRO",
+    "contrato": ""
+  },
+  "48721154": {
+    "nombre": "ESTRELLA LIZ GUIZADO OVANDO",
+    "cargo": "DIGITADOR-JEFATURA",
+    "punto_digitacion": "VALLE ESMERALDA",
+    "contrato": "CAS"
+  },
+  "74816062": {
+    "nombre": "HUARCAYA FLORES URIEL",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "VALLE ESMERALDA",
+    "contrato": "TERCERO"
+  },
+  "48010666": {
+    "nombre": "IRMA HUANCACURI QUISPE",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "VALLE ESMERALDA",
+    "contrato": "CAS"
+  },
+  "73389118": {
+    "nombre": "ORDOÑEZ CAMPO CHARLES JHOJAN",
+    "cargo": "DIGITADOR",
+    "punto_digitacion": "VALLE ESMERALDA",
+    "contrato": "TERCERO"
+  }
+}

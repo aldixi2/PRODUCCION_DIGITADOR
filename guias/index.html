@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guía de Llenado FUA | USPP</title>
+  <link rel="stylesheet" href="estilos.css" />
+</head>
+
+<body>
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">📘</div>
+      <div>
+        <div class="title">Guía de Llenado FUA</div>
+        <div class="subtitle">Ejemplos por servicio (CPMS / ID Servicio) — USPP</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a class="btn" href="../index.html">⬅ Volver al Dashboard</a>
+      <button class="btn primary" id="btnAyuda">¿Cómo usar?</button>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <h2>Buscar servicio</h2>
+      <p class="muted">
+        Escribe el código del servicio (ej: <b>018</b>) y presiona <b>Ver ejemplo</b>.
+        Si aún no existe un ejemplo específico, el sistema mostrará una plantilla base.
+      </p>
+
+      <div class="row">
+        <div class="field grow">
+          <label for="codServicio">Código de servicio</label>
+          <input id="codServicio" placeholder="Ej: 018" inputmode="numeric" />
+        </div>
+
+        <div class="field grow">
+          <label for="descServicio">Descripción (opcional)</label>
+          <input id="descServicio" placeholder="Ej: obstetricia, inmunización…" />
+        </div>
+
+        <button class="btn primary" id="btnVer">👁️ Ver ejemplo</button>
+        <button class="btn" id="btnLimpiar">Limpiar</button>
+      </div>
+
+      <div class="chips" id="chipsRapidos">
+        <button class="chip" data-code="018">018</button>
+        <button class="chip" data-code="056">056</button>
+        <button class="chip" data-code="020">020</button>
+        <button class="chip" data-code="021">021</button>
+      </div>
+    </section>
+
+    <section class="card" id="panelResultado" style="display:none">
+      <div class="panelHead">
+        <div>
+          <h2 id="resTitulo">Ejemplo</h2>
+          <div class="muted" id="resSub">—</div>
+        </div>
+        <div class="panelBtns">
+          <button class="btn" id="btnImprimir">🖨️ Imprimir</button>
+          <button class="btn" id="btnCerrarPanel">Cerrar</button>
+        </div>
+      </div>
+
+      <div id="resBody"></div>
+    </section>
+
+    <section class="card soft">
+      <h2>¿Qué verás aquí?</h2>
+      <ul class="list">
+        <li><b>Ejemplo visual</b> (formato tipo FUA impresa).</li>
+        <li><b>Secciones dinámicas</b>: peso/talla, procedimientos, medicamentos, insumos (si aplica).</li>
+        <li><b>Checklist</b> para no caer en observaciones.</li>
+      </ul>
+
+      <p class="muted" style="margin-top:10px">
+        Paso siguiente: lo conectamos con tu Excel de reglas para que cada servicio muestre campos obligatorios exactos.
+      </p>
+    </section>
+  </main>
+
+  <!-- Modal ayuda -->
+  <div class="modal" id="modalAyuda" aria-hidden="true">
+    <div class="modalCard">
+      <div class="modalHead">
+        <div style="font-weight:900">Cómo usar la guía</div>
+        <button class="btn" id="btnCerrarAyuda">✖</button>
+      </div>
+      <div class="modalBody">
+        <ol class="list">
+          <li>Escribe un código (ej: <b>018</b>).</li>
+          <li>Presiona <b>Ver ejemplo</b>.</li>
+          <li>Lee el ejemplo + checklist.</li>
+          <li>Si quieres, presiona <b>Imprimir</b> para sacar una hoja de capacitación.</li>
+        </ol>
+        <div class="hint">
+          Tip: Si aún no existe ejemplo específico, igual te mostrará una <b>plantilla base</b>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="foot">
+    Sistema USPP — Guía de llenado FUA (módulo interno)
+  </footer>
+
+  <script src="catalogos.js"></script>
+  <script src="ejemplos.js"></script>
+</body>
+</html>
