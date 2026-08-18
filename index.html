@@ -2,13 +2,11 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>USPP Satipo | Producción</title>
+<title>USPP Satipo | Producción del Digitador</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
 <style>
   :root{
     /* — Marca / cromática institucional — */
@@ -88,12 +86,6 @@
   .brand-texto .sub{font-size:11px;color:#B9C7E6;margin-top:2px}
 
   .header-derecha{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .nav-secundario{
-    display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;
-    border:1px solid #D9D5C8;background:#fff;color:var(--navy);
-    font-size:12.5px;font-weight:700;text-decoration:none;cursor:pointer;
-  }
-  .nav-secundario:hover{border-color:var(--navy)}
 
   .bloque-fechas{
     background:rgba(255,255,255,.08);
@@ -547,13 +539,84 @@
     .rk-row{break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   }
 </style>
-</head>
+<style>
+  /* ══════════════════════════════
+     IDENTIDAD PROPIA — Producción del Digitador
+     (mismo header/marca institucional, pero con su propio lenguaje visual:
+     directorio de tarjetas con avatar, en vez de solo matriz tipo hoja de cálculo)
+  ══════════════════════════════ */
+  :root{
+    --avatar-m-1:#4A90CC; --avatar-m-2:#1B4A6E;
+    --avatar-f-1:#F0A8C4; --avatar-f-2:#C44E82;
+    --avatar-x-1:#B9BEC7; --avatar-x-2:#767C88;
+  }
+  .meta-box{display:flex;align-items:center;gap:8px;background:var(--azulclaro);border:1px solid #C7D9E3;border-radius:10px;padding:8px 12px}
+  .meta-box label{font-size:11px;font-weight:700;color:var(--navy);white-space:nowrap}
+  .meta-box input{width:70px;padding:5px 8px;border:1px solid #C7D9E3;border-radius:7px;font-family:var(--f-dato);font-weight:700;text-align:center}
+  .meta-box .hintm{font-size:10px;color:var(--muted)}
+  .nav-secundario{
+    display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;
+    border:1px solid #D9D5C8;background:#fff;color:var(--navy);font-size:12.5px;font-weight:700;
+    text-decoration:none;cursor:pointer;
+  }
+  .nav-secundario:hover{border-color:var(--navy)}
 
+  /* ---- Avatar (placeholder por género — reemplazable por foto real) ---- */
+  .avatar{
+    width:64px;height:64px;border-radius:50%;flex-shrink:0;position:relative;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 10px rgba(0,0,0,.15);border:3px solid #fff;outline:1px solid #EDEAE0;
+  }
+  .avatar-m{background:linear-gradient(150deg,var(--avatar-m-1),var(--avatar-m-2))}
+  .avatar-f{background:linear-gradient(150deg,var(--avatar-f-1),var(--avatar-f-2))}
+  .avatar-x{background:linear-gradient(150deg,var(--avatar-x-1),var(--avatar-x-2))}
+  .avatar svg{width:60%;height:60%;stroke:#fff;fill:none;stroke-width:1.6;opacity:.95}
+  .avatar-sm{width:38px;height:38px;border-width:2px}
+  .avatar-lg{width:84px;height:84px}
+  .avatar-photo-hint{
+    position:absolute;bottom:-3px;right:-3px;width:20px;height:20px;border-radius:50%;
+    background:#fff;border:1.5px solid #E4E1D6;display:flex;align-items:center;justify-content:center;font-size:10px;
+  }
+
+  /* ---- Directorio (grid de tarjetas de personal) ---- */
+  .dir-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .dir-card{
+    background:#fff;border:1px solid var(--borde-dato);border-radius:16px;padding:16px;
+    display:flex;gap:12px;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s;
+  }
+  .dir-card:hover{transform:translateY(-3px);box-shadow:0 12px 26px -14px rgba(20,25,20,.25)}
+  .dir-card::before{content:"";position:absolute;top:0;left:0;width:5px;height:100%}
+  .dir-card.g-m::before{background:linear-gradient(var(--avatar-m-1),var(--avatar-m-2))}
+  .dir-card.g-f::before{background:linear-gradient(var(--avatar-f-1),var(--avatar-f-2))}
+  .dir-card.g-x::before{background:linear-gradient(var(--avatar-x-1),var(--avatar-x-2))}
+  .dir-rank{
+    position:absolute;top:10px;right:10px;font-size:11px;font-weight:800;
+    padding:2px 8px;border-radius:999px;font-family:var(--f-dato);
+  }
+  .dir-rank.r1{background:#FCEAC2;color:#7A4D0A}
+  .dir-rank.r2{background:#E7EAEE;color:#3A4250}
+  .dir-rank.r3{background:#F0D8C4;color:#7A4310}
+  .dir-body{flex:1;min-width:0}
+  .dir-name{font-family:var(--f-display);font-weight:700;font-size:13.5px;color:var(--texto);line-height:1.25;padding-right:46px}
+  .dir-cargo{font-size:10.5px;color:var(--muted);margin-top:1px}
+  .dir-punto{font-size:10px;color:var(--muted);margin-top:1px;display:flex;align-items:center;gap:3px}
+  .dir-stats{display:flex;gap:10px;margin-top:9px;flex-wrap:wrap}
+  .dir-stat{display:flex;flex-direction:column}
+  .dir-stat b{font-family:var(--f-dato);font-size:14px;color:var(--navy)}
+  .dir-stat span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+  .dir-empty{grid-column:1/-1;text-align:center;padding:30px;color:var(--muted)}
+  .dir-legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:14px;font-size:11.5px;color:var(--muted)}
+  .dir-legend span{display:inline-flex;align-items:center;gap:5px}
+  .dir-legend i{width:12px;height:12px;border-radius:50%;display:inline-block}
+
+  /* Ranking: variante con avatar (además del podio ya existente) */
+  .rk-podio-card .avatar{margin:0 auto 8px}
+  .rk-row .avatar-sm{margin-right:2px}
+  .rk-row{grid-template-columns:34px 38px 1fr auto 220px}
+</style>
+</head>
 <body>
 
-<!-- ═══════════════════════════════
-     HEADER
-═══════════════════════════════ -->
 <header>
   <div class="brand">
     <img src="logo.png" alt="USPP Satipo" id="logoImg"
@@ -564,21 +627,17 @@
       </svg>
     </div>
     <div class="brand-texto">
-      <h1>Dashboard de Producción — USPP Satipo</h1>
-      <div class="sub">Sistema de Información del Personal de Salud</div>
+      <h1>Dashboard de Digitación — USPP Satipo</h1>
+      <div class="sub">Directorio y producción del equipo de digitadores</div>
     </div>
   </div>
 
   <div class="header-derecha">
-    <a href="digitador.html" class="nav-secundario no-print">
-      <svg viewBox="0 0 18 18" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="13" height="13" rx="2"/><line x1="2.5" y1="7" x2="15.5" y2="7"/></svg>
-      Digitador
-    </a>
     <div class="bloque-fechas">
       <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6.5"/><path d="M9 5.3V9l2.7 1.3"/></svg>
       <div>
         <div class="f1" id="fechaActualizacion">Actualizado: cargando…</div>
-        <div class="f2" id="fechaDigitacion">Fecha de digitación al: —</div>
+        <div class="f2" id="fechaDigitacion">—</div>
       </div>
     </div>
     <div class="badge-estado" id="estado">Cargando…</div>
@@ -589,54 +648,48 @@
   </div>
 </header>
 
-<!-- ═══════════════════════════════
-     CONTENIDO
-═══════════════════════════════ -->
 <div class="wrap">
 
-  <!-- Encabezado para impresión -->
   <div id="printHeader">
     <img src="logo.png" alt="USPP Satipo" onerror="this.style.display='none'">
     <div>
-      <p id="printTitle">PRODUCCIÓN DEL PERSONAL DE SALUD — USPP SATIPO</p>
+      <p id="printTitle">PRODUCCIÓN DEL DIGITADOR — USPP SATIPO</p>
       <div id="printSub"></div>
       <div id="printFechas"></div>
-      <div id="printKPIs" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"></div>
     </div>
   </div>
 
-  <!-- Banner destacado: qué EESS / qué personal se está viendo (solo impresión) -->
   <div id="printFiltroBanner"></div>
 
   <!-- KPIs -->
-  <div class="kpis no-print" id="kpiCards">
+  <div class="kpis no-print">
     <div class="kpi">
-      <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="13" height="13" rx="2"/><line x1="2.5" y1="7" x2="15.5" y2="7"/><line x1="6" y1="10.3" x2="9" y2="10.3"/></svg></div>
-      <div class="klabel">Total registros</div>
+      <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="13" height="13" rx="2"/><line x1="2.5" y1="7" x2="15.5" y2="7"/></svg></div>
+      <div class="klabel">FUAs digitados</div>
       <div class="kval skeleton" id="kpiTotal" data-raw-val="0">00</div>
-      <div class="ksub" id="kpiTotalSub">Mes seleccionado</div>
+      <div class="ksub">Mes de registro seleccionado</div>
     </div>
     <div class="kpi k2">
       <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3.5 15.5c0-3.3 2.5-5.3 5.5-5.3s5.5 2 5.5 5.3"/></svg></div>
-      <div class="klabel">Profesionales activos</div>
+      <div class="klabel">Digitadores activos</div>
       <div class="kval skeleton" id="kpiProfs" data-raw-val="0">00</div>
-      <div class="ksub">Con producción</div>
-    </div>
-    <div class="kpi k3">
-      <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="10" height="13" rx="1"/><line x1="9" y1="6.5" x2="9" y2="10.5"/><line x1="7" y1="8.5" x2="11" y2="8.5"/><line x1="4" y1="16" x2="14" y2="16"/></svg></div>
-      <div class="klabel">Establecimientos</div>
-      <div class="kval skeleton" id="kpiEESS" data-raw-val="0">00</div>
-      <div class="ksub">Con producción</div>
+      <div class="ksub">Con registros en el periodo</div>
     </div>
     <div class="kpi k4">
+      <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6.5"/><path d="M9 5.3V9l2.7 1.3"/></svg></div>
+      <div class="klabel">Total horas digitadas</div>
+      <div class="kval skeleton" id="kpiHoras" data-raw-val="0">00</div>
+      <div class="ksub">Suma del equipo (ver nota en Filtros)</div>
+    </div>
+    <div class="kpi k3">
       <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="15" x2="3" y2="9"/><line x1="9" y1="15" x2="9" y2="5"/><line x1="15" y1="15" x2="15" y2="11"/></svg></div>
       <div class="klabel">Promedio diario</div>
       <div class="kval skeleton" id="kpiProm" data-raw-val="0">00</div>
-      <div class="ksub">Registros / día</div>
+      <div class="ksub">FUAs / día / digitador</div>
     </div>
   </div>
 
-  <div class="kpis no-print" id="kpiCards2">
+  <div class="kpis no-print">
     <div class="kpi k5">
       <svg class="kpi-ring" viewBox="0 0 40 40">
         <circle cx="20" cy="20" r="16" fill="none" stroke="#E4E1D6" stroke-width="4"/>
@@ -645,69 +698,54 @@
       </svg>
       <div class="klabel">Cumplimiento promedio</div>
       <div class="kval skeleton" id="kpiCumplimiento" data-raw-val="0">00</div>
-      <div class="ksub">Vs. estándar FUAS/día por profesión</div>
+      <div class="ksub">Vs. meta diaria configurable →</div>
     </div>
     <div class="kpi k6">
       <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.8l7.2 12.4H1.8L9 2.8z"/><line x1="9" y1="7.3" x2="9" y2="10.8"/><circle cx="9" cy="12.8" r="0.15" fill="currentColor"/></svg></div>
-      <div class="klabel">Alertas de sobreproducción</div>
+      <div class="klabel">Digitación con demora</div>
       <div class="kval skeleton" id="kpiAlertas" data-raw-val="0">00</div>
-      <div class="ksub">Días con FUAS &gt; estándar</div>
+      <div class="ksub">FUAs con &gt;30 días entre atención y registro</div>
     </div>
     <div class="kpi k7">
       <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,13 7,8 10,11 16,4"/><polyline points="11,4 16,4 16,9"/></svg></div>
       <div class="klabel">Tendencia vs. mes anterior</div>
       <div class="kval skeleton" id="kpiTendencia" data-raw-val="0">00</div>
-      <div class="ksub" id="kpiTendenciaSub">Total de registros</div>
+      <div class="ksub" id="kpiTendenciaSub">FUAs digitados</div>
     </div>
   </div>
 
   <!-- FILTROS -->
   <div class="card no-print">
-    <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="5.3"/><line x1="12.3" y1="12.3" x2="16.5" y2="16.5"/></svg></div> Filtros inteligentes (cascada)</div>
+    <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="5.3"/><line x1="12.3" y1="12.3" x2="16.5" y2="16.5"/></svg></div> Filtros</div>
     <div class="filtros-nota">
-      DNI usado = <b>DNI Resp. Aten.</b> (profesional). No se cruza con DNI del paciente.
-      &nbsp;·&nbsp; <b>Modo confidencial:</b> solo se muestran iniciales + apellidos.
+      Se agrupa por <b>fecha de registro</b> (fecha real de digitación). El <b>"Total de horas digitadas"</b> es una
+      aproximación: por cada día trabajado, se mide el rango entre el primer y el último FUA registrado por esa persona
+      ese día, y se suman todos los días del periodo. No es un reloj de entrada/salida real, es lo mejor que se puede
+      calcular con las horas que trae el Excel.
     </div>
     <div class="row">
       <div class="fg">
-        <label>Año</label>
+        <label>Año (de registro)</label>
         <select id="anio"></select>
       </div>
       <div class="fg">
-        <label>Mes</label>
+        <label>Mes (de registro)</label>
         <select id="mes"></select>
       </div>
-      <div class="fg" style="min-width:240px;flex:1">
-        <label>Establecimiento (EESS)</label>
+      <div class="fg" style="min-width:220px">
+        <label>Establecimiento (de la atención)</label>
         <select id="estab"><option value="">Todos</option></select>
       </div>
-      <div class="fg" style="min-width:200px;flex:1">
-        <label>Tipo profesional</label>
-        <select id="tipo"><option value="">Todos</option></select>
-      </div>
-      <div class="fg" style="min-width:300px;flex:2">
-        <label>Profesional (buscar por apellido o nombre)</label>
-        <div style="position:relative">
-          <input id="profSearch" placeholder="Escribe: illesca, carrillo, ana..." style="width:100%;padding-right:28px">
-          <button id="profSearchClear" type="button" title="Limpiar búsqueda"
-            style="display:none;position:absolute;right:6px;top:50%;transform:translateY(-50%);width:18px;height:18px;border:none;background:none;cursor:pointer;color:var(--muted);padding:0">
-            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4.5" y1="4.5" x2="13.5" y2="13.5"/><line x1="13.5" y1="4.5" x2="4.5" y2="13.5"/></svg>
-          </button>
-        </div>
-        <div class="muted" style="margin-top:3px">Ej: Junnior Aldair Illesca Medina → <b>J. A. Illesca Medina</b></div>
-        <div id="profHits" class="muted" style="margin-top:4px"></div>
-      </div>
-      <div class="fg" style="min-width:220px;flex:1">
-        <label>Prestación (opcional)</label>
-        <input id="prest" placeholder="Buscar servicio o ID (ej: 56 o obstetricia)" style="width:100%">
+      <div class="fg" style="min-width:220px">
+        <label>Buscar digitador</label>
+        <input id="profSearch" placeholder="Escribe un nombre o DNI...">
       </div>
       <div class="fg">
-        <label title="Un mismo profesional puede tener producción en más de un establecimiento en el mes">Modo matriz personal ⓘ</label>
-        <select id="modo" style="width:190px">
-          <option value="auto" selected>Auto (recomendado)</option>
-          <option value="por_dni">Por profesional (detalle)</option>
-          <option value="resumen">Resumen (1 fila)</option>
-        </select>
+        <div class="meta-box">
+          <label>🎯 Meta diaria</label>
+          <input id="metaDiaria" type="number" min="1" step="1" value="50">
+          <span class="hintm">FUAs/día</span>
+        </div>
       </div>
       <div style="display:flex;gap:6px">
         <button class="btn-ap" id="btn">Aplicar</button>
@@ -716,998 +754,407 @@
     </div>
   </div>
 
-  <!-- GRÁFICOS GENERALES -->
-  <div class="card no-print">
-    <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="15" x2="3" y2="9"/><line x1="9" y1="15" x2="9" y2="4"/><line x1="15" y1="15" x2="15" y2="11"/></svg></div> Gráficos — vista general</div>
-    <div class="grid">
-      <div class="chartbox">
-        <div class="chartbox-titulo">Top 15 establecimientos (por registros)</div>
-        <canvas id="c_eess"></canvas>
-      </div>
-      <div class="chartbox">
-        <div class="chartbox-titulo">Distribución por tipo profesional</div>
-        <canvas id="c_tipo"></canvas>
-      </div>
-    </div>
-  </div>
-
-  <!-- REPORTE ANUAL -->
-  <div class="card" id="cardReporteAnual">
-    <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="13" height="11.5" rx="1.5"/><line x1="2.5" y1="7.5" x2="15.5" y2="7.5"/><line x1="6" y1="2" x2="6" y2="5"/><line x1="12" y1="2" x2="12" y2="5"/></svg></div> Reporte anual (imprimible)</div>
-    <div class="muted" style="margin-bottom:10px">
-      Total anual y producción por mes del año seleccionado + comparativo total por año.
-    </div>
-    <div class="row" style="align-items:center;margin-bottom:10px">
-      <div class="kpi-anual-badge" id="kpiAnual">Total anual: —</div>
-      <button class="btn-cargar no-print" id="btnCargarAnio" style="margin-left:auto">
-        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 9a6.5 6.5 0 1 1-1.9-4.6"/><path d="M15.5 3v3.5H12"/></svg>
-        Cargar año
-      </button>
-    </div>
-    <div class="grid">
-      <div class="chartbox">
-        <div class="chartbox-titulo">Producción por mes (año seleccionado)</div>
-        <canvas id="c_anio_mes"></canvas>
-        <img id="img_c_anio_mes" style="display:none;width:100%;max-height:260px;object-fit:contain" alt="">
-      </div>
-      <div class="chartbox">
-        <div class="chartbox-titulo">Total por año (comparativo)</div>
-        <canvas id="c_years_total"></canvas>
-        <img id="img_c_years_total" style="display:none;width:100%;max-height:260px;object-fit:contain" alt="">
-      </div>
-    </div>
-  </div>
-
   <!-- TABS -->
   <div class="card soft no-print">
     <div class="tabs">
-      <div class="tab active" id="tabPersonal"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3.5 15.5c0-3.3 2.5-5.3 5.5-5.3s5.5 2 5.5 5.3"/></svg> Matriz del personal</div>
-      <div class="tab" id="tabEESS"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="10" height="13" rx="1"/><line x1="9" y1="6.5" x2="9" y2="10.5"/><line x1="7" y1="8.5" x2="11" y2="8.5"/><line x1="4" y1="16" x2="14" y2="16"/></svg> Matriz por establecimiento</div>
+      <div class="tab active" id="tabDirectorio"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3.5 15.5c0-3.3 2.5-5.3 5.5-5.3s5.5 2 5.5 5.3"/></svg> 🪪 Directorio</div>
+      <div class="tab" id="tabMatriz"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="13" height="13" rx="2"/><line x1="2.5" y1="7" x2="15.5" y2="7"/></svg> Matriz por día</div>
       <div class="tab" id="tabRanking"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6z"/></svg> 🏆 Ranking</div>
     </div>
   </div>
 
-  <!-- MATRIZ PERSONAL -->
-  <div class="card" id="cardPersonal">
-    <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3.5 15.5c0-3.3 2.5-5.3 5.5-5.3s5.5 2 5.5 5.3"/></svg></div> Matriz del personal (EESS + Personal + días) — Confidencial</div>
-    <div class="scroll" style="margin-top:4px"><table id="matrizPersonal"></table></div>
-    <div class="leyenda">
-      <span><span class="leyenda-dot" style="background:#1B4A6E"></span> Alta producción</span>
-      <span><span class="leyenda-dot" style="background:#9FD8E2"></span> Media producción</span>
-      <span><span class="leyenda-dot" style="background:#EAF6F8"></span> Baja producción</span>
-      <span><span class="leyenda-dot" style="background:#dc2626"></span> Alerta: día con FUAS &gt; estándar</span>
-      <span><span class="leyenda-dot" style="background:#0E9F6E"></span> Cumplimiento ≥70% y ≤110%</span>
-      <span><span class="leyenda-dot" style="background:#d97706"></span> Cumplimiento &lt;70%</span>
+  <!-- DIRECTORIO -->
+  <div class="card" id="cardDirectorio">
+    <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3.5 15.5c0-3.3 2.5-5.3 5.5-5.3s5.5 2 5.5 5.3"/></svg></div> Directorio de digitadores</div>
+    <div class="dir-legend">
+      <span><i style="background:linear-gradient(150deg,var(--avatar-m-1),var(--avatar-m-2))"></i> Masculino</span>
+      <span><i style="background:linear-gradient(150deg,var(--avatar-f-1),var(--avatar-f-2))"></i> Femenino</span>
+      <span><i style="background:linear-gradient(150deg,var(--avatar-x-1),var(--avatar-x-2))"></i> Sin dato</span>
+      <span>📷 = espacio listo para foto real (edita <code>digitadores.json</code> → campo "foto")</span>
     </div>
-    <div class="muted" style="margin-top:6px">
-      Estándar de referencia (FUAS máx./día por profesión): Médico 60 · Odontólogo 50 · Enfermera 50 · Obstetra/Obstetriz 50 ·
-      Técnico de Enfermería 50 · Nutricionista 40 · Psicólogo 24 · Trabajadora Social 40.
-    </div>
+    <div class="dir-grid" id="directorioGrid"></div>
   </div>
 
-  <!-- MATRIZ EESS -->
-  <div class="card" id="cardEESS" style="display:none">
-    <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="10" height="13" rx="1"/><line x1="9" y1="6.5" x2="9" y2="10.5"/><line x1="7" y1="8.5" x2="11" y2="8.5"/><line x1="4" y1="16" x2="14" y2="16"/></svg></div> Matriz por establecimiento (EESS × días)</div>
-    <div class="scroll" style="margin-top:4px"><table id="matrizEESS"></table></div>
+  <!-- MATRIZ -->
+  <div class="card" id="cardMatriz" style="display:none">
+    <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="13" height="13" rx="2"/></svg></div> Matriz del digitador (FUAs × día de registro)</div>
+    <div class="muted" style="margin-bottom:10px">Cada celda es la cantidad de FUAs que ese digitador registró ese día.</div>
+    <div class="scroll"><table id="matrizDigitador"></table></div>
   </div>
 
   <!-- RANKING -->
-  <div class="card" id="cardRanking" style="display:none">
+  <div class="card" id="cardRankingDig" style="display:none">
     <div class="card-titulo">
       <div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6z"/></svg></div>
-      Ranking de Producción — Personal de Salud
+      Ranking de Digitación
     </div>
-
     <div class="rk-toolbar no-print">
       <div class="rk-metric-label">Ordenar por:</div>
-      <div class="rk-metrics" id="rkMetrics">
-        <button class="rk-metric-btn active" data-metric="cumpl" type="button">% Cumplimiento (justo entre profesiones)</button>
-        <button class="rk-metric-btn" data-metric="total" type="button">Total de FUAS</button>
+      <div class="rk-metrics" id="rkMetricsDig">
+        <button class="rk-metric-btn active" data-metric="total" type="button">Total de FUAs digitados</button>
+        <button class="rk-metric-btn" data-metric="horas" type="button">Total de horas digitadas</button>
         <button class="rk-metric-btn" data-metric="promedio" type="button">Promedio por día</button>
+        <button class="rk-metric-btn" data-metric="cumpl" type="button">% Cumplimiento vs. meta</button>
       </div>
     </div>
-    <div class="muted" style="margin-bottom:10px">
-      El ranking usa los mismos filtros de arriba (año, mes, EESS, tipo profesional, búsqueda). Por defecto ordena por
-      <b>% de cumplimiento</b> frente al estándar de cada profesión, para comparar de forma justa a personal con estándares distintos
-      (ej. un Psicólogo vs. un Médico). Los nombres se muestran en modo confidencial (inicial + apellidos), igual que en la matriz.
-    </div>
-
-    <div class="rk-podio" id="rankingPodio"></div>
-    <div class="rk-lista" id="rankingLista"></div>
+    <div class="rk-podio" id="rankingPodioDig"></div>
+    <div class="rk-lista" id="rankingListaDig"></div>
   </div>
 
   <!-- FOOTER IMPRESIÓN -->
   <div class="card" id="printFooter">
-    Sistema creado por Junnior Aldair Illesca Medina — USPP Satipo &nbsp;|&nbsp; <span id="printFechaFooter"></span>
+    <div class="pf-inner">
+      Sistema creado por Junnior Aldair Illesca Medina — USPP Satipo &nbsp;|&nbsp; <span id="printFechaFooter"></span>
+    </div>
   </div>
 
-</div><!-- /wrap -->
-
+</div>
 <script>
-/* ══════════════════════════════════════════
-   ESTADO GLOBAL
-══════════════════════════════════════════ */
-let BASE = [];
-let PREV_BASE = []; // base del mes anterior (para tendencia)
-let MANIFEST = null;
-let chartEESS=null, chartTipo=null, chartAnioMes=null, chartYearsTotal=null;
-const YEAR_CACHE       = new Map();
-const YEARS_TOTAL_CACHE = new Map();
-const $ = id => document.getElementById(id);
-
+const $ = (id)=>document.getElementById(id);
 const MONTHS = [
   {n:1,t:"Enero"},{n:2,t:"Febrero"},{n:3,t:"Marzo"},{n:4,t:"Abril"},
   {n:5,t:"Mayo"},{n:6,t:"Junio"},{n:7,t:"Julio"},{n:8,t:"Agosto"},
   {n:9,t:"Septiembre"},{n:10,t:"Octubre"},{n:11,t:"Noviembre"},{n:12,t:"Diciembre"}
 ];
+const UMBRAL_ALTO = 110, UMBRAL_BAJO = 70;
 
-/* Paleta de colores para gráficos */
-const PALETTE = [
-  "#1B4A6E","#E49C30","#0E9F6E","#6D4FC2",
-  "#D97706","#BE185D","#255F8C","#065F46",
-  "#4338CA","#C2410C","#0369A1","#7C3AED"
-];
-if(window.Chart){
-  Chart.defaults.font.family = "'IBM Plex Sans','Segoe UI',sans-serif";
-  Chart.defaults.color = "#5B6472";
-}
-
-/* Plugin propio (sin librería externa) para mostrar el valor sobre cada barra —
-   así se lee el número exacto sin pasar el mouse, útil también en capturas. */
-const valueLabelPlugin = {
-  id:"valueLabels",
-  afterDatasetsDraw(chart){
-    const {ctx} = chart;
-    const horizontal = chart.options.indexAxis==="y";
-    ctx.save();
-    ctx.font = "600 10px 'IBM Plex Mono', monospace";
-    ctx.fillStyle = "#33404E";
-    ctx.textBaseline = "middle";
-    chart.data.datasets.forEach((dataset,dsIndex)=>{
-      const meta = chart.getDatasetMeta(dsIndex);
-      if(meta.hidden) return;
-      meta.data.forEach((bar,i)=>{
-        const val = dataset.data[i];
-        if(val===0 || val==null) return;
-        const label = Number(val).toLocaleString();
-        if(horizontal){
-          ctx.textAlign="left";
-          ctx.fillText(label, bar.x+6, bar.y);
-        } else {
-          ctx.textAlign="center";
-          ctx.fillText(label, bar.x, bar.y-8);
-        }
-      });
-    });
-    ctx.restore();
-  }
-};
-
-/* ══════════════════════════════════════════
-   ESTÁNDARES DE PRODUCCIÓN (FUAS máx./día/persona)
-   Editable: cambia el número si tu norma real difiere.
-   Nota: en la tabla original, ENFERMERA y OBSTETRA aparecían
-   con 50 y con 40 → se unificaron aquí en 50 (a pedido).
-══════════════════════════════════════════ */
-const ESTANDARES_FUA = {
-  "MEDICO":                 60,
-  "ODONTOLOGO":             50,
-  "ENFERMERA":              50,
-  "OBSTETRA":               50,   // incluye "Obstetriz" (mismo estándar, ver REGLAS_TIPO)
-  "TECNICO DE ENFERMERIA":  50,
-  "NUTRICIONISTA":          40,
-  "PSICOLOGO":              24,
-  "TRABAJADORA SOCIAL":     40
-};
-/* Umbrales para el semáforo de % de cumplimiento */
-const UMBRAL_ALTO = 110; // por encima de esto: posible sobreproducción / error
-const UMBRAL_BAJO = 70;  // por debajo de esto: bajo el estándar
-
-function normTipo(t){
-  return String(t||"")
-    .toUpperCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g,"") // quita tildes
-    .replace(/\s+/g," ")
-    .trim();
-}
-const ESTANDARES_NORM = new Map(
-  Object.entries(ESTANDARES_FUA).map(([k,v])=>[normTipo(k),v])
-);
-
-/* Los sistemas de salud no siempre escriben la profesión igual
-   ("Obstetriz" en vez de "Obstetra", "Enfermera(a)", "Técnico en
-   Enfermería", "Cirujano Dentista", etc.). Para no depender de la
-   redacción exacta, si no hay coincidencia literal se busca por
-   palabra clave. El orden importa: lo más específico va primero
-   (p.ej. "técnico en enfermería" antes que "enfermería" a secas). */
-const REGLAS_TIPO = [
-  { estandar:"TECNICO DE ENFERMERIA", test:t=>/TECNIC/.test(t) && /ENFERMER/.test(t) },
-  { estandar:"OBSTETRA",              test:t=>/OBSTETR/.test(t) },              // Obstetra / Obstetriz
-  { estandar:"ENFERMERA",             test:t=>/ENFERMER/.test(t) },
-  { estandar:"MEDICO",                test:t=>/MEDIC/.test(t) },
-  { estandar:"ODONTOLOGO",            test:t=>/ODONTOLOG|DENTISTA/.test(t) },
-  { estandar:"NUTRICIONISTA",         test:t=>/NUTRICION/.test(t) },
-  { estandar:"PSICOLOGO",             test:t=>/PSICOLOG/.test(t) },
-  { estandar:"TRABAJADORA SOCIAL",    test:t=>/TRABAJO SOCIAL|TRABAJADOR/.test(t) }
-];
-
-function getEstandar(tipoProfesional){
-  const k = normTipo(tipoProfesional);
-  if(ESTANDARES_NORM.has(k)) return ESTANDARES_NORM.get(k);
-  for(const regla of REGLAS_TIPO){
-    if(regla.test(k)) return ESTANDARES_FUA[regla.estandar];
-  }
-  return null;
-}
-
-/* ══════════════════════════════════════════
-   HELPERS
-══════════════════════════════════════════ */
-function esc(s){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) }
-function unesc(s){ return String(s).replace(/&amp;|&lt;|&gt;|&quot;|&#39;/g, m=>({'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"}[m])) }
-function canonDNI(v){ return String(v??"").replace(/\D/g,"") }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) }
 function diasEnMes(anio,mes){ return new Date(Number(anio),Number(mes),0).getDate() }
 
-function formatFecha(str){
-  /* Convierte "2026-04-08 11:30:48" → "08/04/2026 11:30 AM/PM" */
-  if(!str) return "—";
-  const d = new Date(str.replace(" ","T"));
-  if(isNaN(d)) return str;
-  const dd = String(d.getDate()).padStart(2,"0");
-  const mm = String(d.getMonth()+1).padStart(2,"0");
-  const yyyy = d.getFullYear();
-  let h = d.getHours(), ampm = h>=12?"PM":"AM";
-  h = h%12 || 12;
-  const min = String(d.getMinutes()).padStart(2,"0");
-  return `${dd}/${mm}/${yyyy} ${h}:${min} ${ampm}`;
-}
+let RAW = [];
+let DIGITADORES = {};
+let MANIFEST = {};
+let RANKING_METRIC_DIG = "total";
 
 /* ══════════════════════════════════════════
-   CONFIDENCIALIDAD PROFESIONAL
+   IDENTIDAD DEL DIGITADOR (nombre, cargo, género, avatar)
 ══════════════════════════════════════════ */
-let PROF_FULL_LIST      = [];
-let PROF_FULL_TO_LABEL  = new Map();
-let PROF_LABEL_TO_FULL  = new Map();
-let PROF_SELECTED_FULL  = "";
-
-function splitNameParts(full){
-  full = String(full||"").trim().replace(/\s+/g," ");
-  if(!full) return {names:[],lastnames:[]};
-  const parts = full.split(" ");
-  const lastnames = parts.length>=2 ? parts.slice(-2) : parts.slice(-1);
-  const names = parts.slice(0, parts.length-lastnames.length);
-  return {names,lastnames};
-}
-function labelConfidencial(full){
-  const {names,lastnames} = splitNameParts(full);
-  const ini = names.map(n=>(n[0]?n[0].toUpperCase()+".":"")).filter(Boolean).join(" ");
-  return `${ini}${ini?" ":""}${lastnames.join(" ")}`.trim();
-}
-
-window.selectProf = (full)=>{
-  PROF_SELECTED_FULL = unesc(full);
-  $("profSearch").value = PROF_FULL_TO_LABEL.get(PROF_SELECTED_FULL)||PROF_SELECTED_FULL;
-  $("profHits").textContent = "";
-  actualizarBotonLimpiarBusqueda();
-  refreshCascada();
-  render();
-};
-
-/* ══════════════════════════════════════════
-   EVENTOS BOTONES
-══════════════════════════════════════════ */
-$("btn").onclick = ()=>render();
-$("btnReset").onclick = ()=>{
-  $("estab").value=""; $("tipo").value="";
-  $("prest").value=""; $("modo").value="auto";
-  $("profSearch").value=""; $("profHits").textContent="";
-  PROF_SELECTED_FULL="";
-  actualizarBotonLimpiarBusqueda();
-  refreshCascada(); render();
-};
-$("tabPersonal").onclick = ()=>{
-  $("tabPersonal").classList.add("active");
-  $("tabEESS").classList.remove("active");
-  $("tabRanking").classList.remove("active");
-  $("cardPersonal").style.display="";
-  $("cardEESS").style.display="none";
-  $("cardRanking").style.display="none";
-  $("printTitle").textContent="PRODUCCIÓN DEL PERSONAL DE SALUD — USPP SATIPO";
-  $("cardPersonal").classList.remove("anim-fadein"); void $("cardPersonal").offsetWidth; $("cardPersonal").classList.add("anim-fadein");
-};
-$("tabEESS").onclick = ()=>{
-  $("tabEESS").classList.add("active");
-  $("tabPersonal").classList.remove("active");
-  $("tabRanking").classList.remove("active");
-  $("cardEESS").style.display="";
-  $("cardPersonal").style.display="none";
-  $("cardRanking").style.display="none";
-  $("printTitle").textContent="PRODUCCIÓN POR ESTABLECIMIENTO — USPP SATIPO";
-  $("cardEESS").classList.remove("anim-fadein"); void $("cardEESS").offsetWidth; $("cardEESS").classList.add("anim-fadein");
-};
-$("tabRanking").onclick = ()=>{
-  $("tabRanking").classList.add("active");
-  $("tabPersonal").classList.remove("active");
-  $("tabEESS").classList.remove("active");
-  $("cardRanking").style.display="";
-  $("cardPersonal").style.display="none";
-  $("cardEESS").style.display="none";
-  $("printTitle").textContent="RANKING DE PRODUCCIÓN — PERSONAL DE SALUD — USPP SATIPO";
-  renderRanking();
-  $("cardRanking").classList.remove("anim-fadein"); void $("cardRanking").offsetWidth; $("cardRanking").classList.add("anim-fadein");
-};
-document.querySelectorAll(".rk-metric-btn").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    document.querySelectorAll(".rk-metric-btn").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    RANKING_METRIC = btn.dataset.metric;
-    renderRanking();
-  });
-});
-["estab","tipo","modo"].forEach(id=>{
-  $(id).addEventListener("change",()=>{ refreshCascada(); render(); });
-});
-$("prest").addEventListener("input",()=>render());
-
-function actualizarBotonLimpiarBusqueda(){
-  $("profSearchClear").style.display = $("profSearch").value.trim() ? "block" : "none";
-}
-$("profSearchClear").onclick = ()=>{
-  $("profSearch").value="";
-  $("profSearch").dispatchEvent(new Event("input"));
-  $("profSearch").focus();
-};
-
-$("profSearch").addEventListener("input",()=>{
-  actualizarBotonLimpiarBusqueda();
-  const q=$("profSearch").value.trim().toLowerCase();
-  if(!q){
-    PROF_SELECTED_FULL="";
-    $("profHits").textContent="";
-    refreshCascada(); render(); return;
+function normalizaNombreCompleto(full){
+  full = String(full||"").trim();
+  if(full.includes(",")){
+    const [apellidos, nombres] = full.split(",").map(s=>s.trim());
+    return `${nombres} ${apellidos}`.trim();
   }
-  const hits = PROF_FULL_LIST
-    .filter(f=>f.toLowerCase().includes(q)||(PROF_FULL_TO_LABEL.get(f)||"").toLowerCase().includes(q))
-    .slice(0,25);
-  if(hits.length===1) PROF_SELECTED_FULL=hits[0];
-  else PROF_SELECTED_FULL="";
-  $("profHits").innerHTML = hits.map(f=>{
-    const lbl=esc(PROF_FULL_TO_LABEL.get(f)||f);
-    return `<span class="badge" style="margin:2px;cursor:pointer" onclick="selectProf('${esc(f)}')">${lbl}</span>`;
-  }).join(" ");
-  render();
-});
-
-$("btnCargarAnio").onclick = async ()=>{
-  await cargarAnio(true);
-  await cargarTotalesPorAnios(true);
-  renderAnual();
-  renderTotalesPorAnios();
-};
-
-/* ══════════════════════════════════════════
-   CARGA MANIFEST + AUTO
-══════════════════════════════════════════ */
-async function cargarManifestYAuto(){
-  const r = await fetch("data/manifest.json?ts="+Date.now());
-  const m = await r.json();
-  MANIFEST = m;
-
-  /* ── Fechas en el header ── */
-  const ahora = new Date();
-  const pad = n=>String(n).padStart(2,"0");
-  const fechaAhora = `${pad(ahora.getDate())}/${pad(ahora.getMonth()+1)}/${ahora.getFullYear()} `
-    + `${ahora.getHours()%12||12}:${pad(ahora.getMinutes())} ${ahora.getHours()>=12?"PM":"AM"}`;
-  $("fechaActualizacion").textContent = `Actualizado: ${fechaAhora}`;
-  $("fechaDigitacion").textContent    = `Fecha de digitación al: ${formatFecha(m.generado||"")}`;
-  $("printFechaFooter").textContent   = `Actualizado: ${fechaAhora} | Digitación al: ${formatFecha(m.generado||"")}`;
-
-  /* ── Selects año/mes ── */
-  const years = [...new Set(m.disponibles.map(x=>x.anio))].sort((a,b)=>a-b);
-  $("anio").innerHTML = years.map(y=>`<option value="${y}">${y}</option>`).join("");
-
-  const fillMes = ()=>{
-    const y = Number($("anio").value);
-    const ms = m.disponibles.filter(x=>x.anio===y).map(x=>x.mes).sort((a,b)=>a-b);
-    $("mes").innerHTML = ms.map(mm=>{
-      const name=MONTHS.find(k=>k.n===mm)?.t||mm;
-      return `<option value="${mm}">${name}</option>`;
-    }).join("");
+  return full;
+}
+function infoDigitador(dni){
+  const info = DIGITADORES[dni] || {};
+  return {
+    nombre: info.nombre ? normalizaNombreCompleto(info.nombre) : ("DNI "+dni),
+    cargo: (info.cargo||"").trim() || "DIGITADOR",
+    punto: (info.punto_digitacion||"").trim(),
+    sexo: (info.sexo||"").trim().toUpperCase(), // "M" | "F" | ""
+    contrato: (info.contrato||"").trim(),
+    foto: (info.foto||"").trim()
   };
-
-  $("anio").addEventListener("change", async ()=>{
-    fillMes();
-    await cargarMes(); await cargarMesAnterior(); refreshCascada(); render();
-    await cargarAnio(true); await cargarTotalesPorAnios(true);
-    renderAnual(); renderTotalesPorAnios();
-  });
-  $("mes").addEventListener("change", async ()=>{
-    await cargarMes(); await cargarMesAnterior(); refreshCascada(); render();
-  });
-
-  $("anio").value = m.ultimo.anio;
-  fillMes();
-  $("mes").value = m.ultimo.mes;
-
-  await cargarMes(); await cargarMesAnterior(); refreshCascada(); render();
-  await cargarAnio(); await cargarTotalesPorAnios();
-  renderAnual(); renderTotalesPorAnios();
+}
+function claseGenero(sexo){
+  if(sexo==="M") return "m";
+  if(sexo==="F") return "f";
+  return "x";
+}
+const ICONO_PERSONA = `<svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="4"/><path d="M4 20.5c0-4.5 3.6-7.5 8-7.5s8 3 8 7.5"/></svg>`;
+function avatarHTML(dni, size){
+  const info = infoDigitador(dni);
+  const cls = claseGenero(info.sexo);
+  const szClass = size==="sm" ? " avatar-sm" : (size==="lg" ? " avatar-lg" : "");
+  if(info.foto){
+    return `<div class="avatar avatar-${cls}${szClass}" style="background-image:url('${esc(info.foto)}');background-size:cover;background-position:center">
+      <div class="avatar-photo-hint" title="Foto real">✓</div></div>`;
+  }
+  return `<div class="avatar avatar-${cls}${szClass}">${ICONO_PERSONA}
+    <div class="avatar-photo-hint" title="Sin foto — placeholder por género">📷</div></div>`;
 }
 
 /* ══════════════════════════════════════════
-   CARGA MES
+   CARGA DE DATOS — un solo archivo por mes (bucketed por fecha de registro,
+   así que aquí NO hace falta cargar meses de más como en otros proyectos)
 ══════════════════════════════════════════ */
-async function cargarMes(){
-  const anio=$("anio").value, mes=$("mes").value;
-  const file=`data/base_${anio}_${String(mes).padStart(2,"0")}.json`;
-  $("estado").textContent=`Cargando ${anio}-${String(mes).padStart(2,"0")}…`;
-  mostrarEsqueletoKPIs();
-  const r=await fetch(file+"?ts="+Date.now());
-  BASE=await r.json();
-  for(const x of BASE) x.dni_prof=canonDNI(x.dni_prof);
-  $("estado").textContent=`Base lista: ${BASE.length.toLocaleString()} registros (${anio}-${String(mes).padStart(2,"0")})`;
-}
-
-/* ══════════════════════════════════════════
-   CARGA MES ANTERIOR (para tendencia)
-══════════════════════════════════════════ */
-async function cargarMesAnterior(){
-  PREV_BASE = [];
-  if(!MANIFEST) return;
-  let anio=Number($("anio").value), mes=Number($("mes").value);
-  mes -= 1;
-  if(mes<1){ mes=12; anio-=1; }
-  const existe = MANIFEST.disponibles.some(x=>x.anio===anio && x.mes===mes);
-  if(!existe) return;
-  const file=`data/base_${anio}_${String(mes).padStart(2,"0")}.json`;
+async function cargarTodo(){
   try{
-    const r=await fetch(file+"?ts="+Date.now());
-    const d=await r.json();
-    for(const x of d) x.dni_prof=canonDNI(x.dni_prof);
-    PREV_BASE = Array.isArray(d) ? d : [];
-  }catch(e){ PREV_BASE = []; }
-}
-
-/* ══════════════════════════════════════════
-   CARGA ANUAL
-══════════════════════════════════════════ */
-async function cargarAnio(forzar=false){
-  if(!MANIFEST) return;
-  const anio=Number($("anio").value);
-  if(!forzar && YEAR_CACHE.has(anio)) return;
-  $("estado").textContent=`Cargando año ${anio}…`;
-  const meses=MANIFEST.disponibles.filter(x=>x.anio===anio).map(x=>x.mes).sort((a,b)=>a-b);
-  const tot={};
-  for(const mes of meses){
-    const file=`data/base_${anio}_${String(mes).padStart(2,"0")}.json`;
-    try{ const r=await fetch(file+"?ts="+Date.now()); const d=await r.json(); tot[mes]=Array.isArray(d)?d.length:0; }
-    catch(e){ tot[mes]=0; }
+    const rManifest = await fetch("data/manifest.json?ts="+Date.now());
+    MANIFEST = await rManifest.json();
+  }catch(e){
+    $("estado").textContent = "❌ No se encontró data/manifest.json";
+    return;
   }
-  YEAR_CACHE.set(anio,tot);
-  $("estado").textContent=`Año ${anio} cargado`;
+  try{
+    const rDig = await fetch("digitadores.json?ts="+Date.now());
+    const raw = await rDig.json();
+    DIGITADORES = {};
+    Object.keys(raw).forEach(k=>{ if(k!=="_instrucciones") DIGITADORES[k]=raw[k]; });
+  }catch(e){ DIGITADORES = {}; }
+
+  const disponibles = (MANIFEST.disponibles||[]).slice().sort((a,b)=> a.anio-b.anio || a.mes-b.mes);
+  if(!disponibles.length){
+    $("estado").textContent = "⚠ Sin archivos en data/manifest.json — corre consolidar.py primero";
+    $("directorioGrid").innerHTML = `<div class="dir-empty">Aún no hay datos. Corre <code>consolidar.py</code> (o <code>admin.html</code>)
+      apuntando a tu carpeta de Excel, y recarga esta página.</div>`;
+    return;
+  }
+
+  const anios = [...new Set(disponibles.map(d=>d.anio))].sort((a,b)=>b-a);
+  $("anio").innerHTML = anios.map(a=>`<option value="${a}">${a}</option>`).join("");
+  const ultimo = MANIFEST.ultimo || disponibles[disponibles.length-1];
+  $("anio").value = ultimo.anio;
+  fillMeses();
+  $("mes").value = ultimo.mes;
+
+  const metaGuardada = localStorage.getItem("uspp_meta_digitador");
+  if(metaGuardada) $("metaDiaria").value = metaGuardada;
+
+  await render();
 }
 
-function renderAnual(){
-  const anio=Number($("anio").value);
-  const tot=YEAR_CACHE.get(anio)||{};
-  const labels=MONTHS.map(m=>m.t);
-  const data=MONTHS.map(m=>Number(tot[m.n]||0));
-  const total=data.reduce((a,b)=>a+b,0);
-  $("kpiAnual").textContent=`Total anual ${anio}: ${total.toLocaleString()}`;
-  if(chartAnioMes) chartAnioMes.destroy();
-  chartAnioMes=new Chart($("c_anio_mes"),{
-    type:"bar",
-    data:{ labels, datasets:[{ label:"Registros", data,
-      backgroundColor: data.map((_,i)=>`rgba(15,42,92,${0.55+0.45*(i/11)})`),
-      borderRadius:5, borderSkipped:false
-    }]},
-    options:{ responsive:true, maintainAspectRatio:false, layout:{padding:{top:14}},
-      plugins:{ legend:{display:false} },
-      scales:{ x:{grid:{display:false}}, y:{grid:{color:"#EDEAE0"}} }
-    },
-    plugins:[valueLabelPlugin]
-  });
+function fillMeses(){
+  const anio = $("anio").value;
+  const meses = (MANIFEST.disponibles||[]).filter(d=>String(d.anio)===String(anio)).map(d=>d.mes).sort((a,b)=>a-b);
+  $("mes").innerHTML = meses.map(m=>`<option value="${m}">${MONTHS.find(x=>x.n===m)?.t||m}</option>`).join("");
+  if(meses.length) $("mes").value = meses[meses.length-1];
 }
+
+async function fetchMes(anio, mes){
+  const info = (MANIFEST.disponibles||[]).find(d=>String(d.anio)===String(anio) && String(d.mes)===String(mes));
+  if(!info) return [];
+  try{
+    const r = await fetch("data/"+info.file+"?ts="+Date.now());
+    return await r.json();
+  }catch(e){ return []; }
+}
+
+$("anio").addEventListener("change", ()=>{ fillMeses(); render(); });
+$("mes").addEventListener("change", render);
+$("estab").addEventListener("change", render);
+$("profSearch").addEventListener("input", render);
+$("metaDiaria").addEventListener("change", ()=>{
+  localStorage.setItem("uspp_meta_digitador", $("metaDiaria").value);
+  render();
+});
+$("btn").onclick = render;
+$("btnReset").onclick = ()=>{ $("estab").value=""; $("profSearch").value=""; render(); };
 
 /* ══════════════════════════════════════════
-   TOTALES POR AÑO
+   FILTRADO
 ══════════════════════════════════════════ */
-async function cargarTotalesPorAnios(forzar=false){
-  if(!MANIFEST) return;
-  const years=[...new Set(MANIFEST.disponibles.map(x=>x.anio))].sort((a,b)=>a-b);
-  if(!forzar){ let ok=true; for(const y of years) if(!YEARS_TOTAL_CACHE.has(y)){ok=false;break;} if(ok) return; }
-  $("estado").textContent="Cargando totales por año…";
-  for(const y of years){
-    if(!forzar && YEARS_TOTAL_CACHE.has(y)) continue;
-    const meses=MANIFEST.disponibles.filter(x=>x.anio===y).map(x=>x.mes);
-    let total=0;
-    for(const mes of meses){
-      const file=`data/base_${y}_${String(mes).padStart(2,"0")}.json`;
-      try{ const r=await fetch(file+"?ts="+Date.now()); const d=await r.json(); total+=Array.isArray(d)?d.length:0; }catch(e){}
+function aplicarFiltros(){
+  const estab = $("estab").value;
+  const q = $("profSearch").value.trim().toLowerCase();
+  return RAW.filter(r=>{
+    if(!r.digitador_dni) return false;
+    if(estab && r.establecimiento!==estab) return false;
+    if(q){
+      const nom = infoDigitador(r.digitador_dni).nombre.toLowerCase();
+      if(!nom.includes(q) && !r.digitador_dni.includes(q)) return false;
     }
-    YEARS_TOTAL_CACHE.set(y,total);
-  }
-  $("estado").textContent="Totales por año listos";
-}
-
-function renderTotalesPorAnios(){
-  if(!MANIFEST) return;
-  const years=[...new Set(MANIFEST.disponibles.map(x=>x.anio))].sort((a,b)=>a-b);
-  const labels=years.map(String);
-  const data=years.map(y=>Number(YEARS_TOTAL_CACHE.get(y)||0));
-  if(chartYearsTotal) chartYearsTotal.destroy();
-  chartYearsTotal=new Chart($("c_years_total"),{
-    type:"bar",
-    data:{ labels, datasets:[{ label:"Total anual", data,
-      backgroundColor:["#E49C30","#1B4A6E","#6D4FC2","#0E9F6E"].slice(0,years.length),
-      borderRadius:6, borderSkipped:false
-    }]},
-    options:{ responsive:true, maintainAspectRatio:false, layout:{padding:{top:14}},
-      plugins:{ legend:{display:false} },
-      scales:{ x:{grid:{display:false}}, y:{grid:{color:"#EDEAE0"}} }
-    },
-    plugins:[valueLabelPlugin]
+    return true;
   });
 }
-
-/* ══════════════════════════════════════════
-   CASCADA (sin DNI)
-══════════════════════════════════════════ */
-function refreshCascada(){
-  const estabSel=unesc($("estab").value);
-  const tipoSel=unesc($("tipo").value);
-  let d=BASE;
-  if(estabSel) d=d.filter(x=>x.establecimiento===estabSel);
-  if(tipoSel)  d=d.filter(x=>x.tipo_profesional===tipoSel);
-  const estabs=[...new Set(d.map(x=>x.establecimiento).filter(Boolean))].sort();
-  const tipos=[...new Set(d.map(x=>x.tipo_profesional).filter(Boolean))].sort();
-  $("estab").innerHTML=`<option value="">Todos</option>`+estabs.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
-  $("tipo").innerHTML=`<option value="">Todos</option>`+tipos.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join("");
-  const profSet=new Set(d.map(x=>x.profesional).filter(Boolean));
-  PROF_FULL_LIST=[...profSet].sort((a,b)=>a.localeCompare(b,"es"));
-  PROF_FULL_TO_LABEL.clear(); PROF_LABEL_TO_FULL.clear();
-  for(const full of PROF_FULL_LIST){
-    const lbl=labelConfidencial(full);
-    PROF_FULL_TO_LABEL.set(full,lbl);
-    if(!PROF_LABEL_TO_FULL.has(lbl)) PROF_LABEL_TO_FULL.set(lbl,full);
-  }
-  if(estabSel) $("estab").value=esc(estabSel);
-  if(tipoSel)  $("tipo").value=esc(tipoSel);
-}
-
-/* ══════════════════════════════════════════
-   FILTROS TEXTO (para impresión)
-══════════════════════════════════════════ */
 function filtrosTexto(){
   const anio=$("anio").value, mes=$("mes").value;
   const mesName=MONTHS.find(x=>String(x.n)===String(mes))?.t||mes;
-  const tipo=$("tipo").value?`Tipo: ${unesc($("tipo").value)}`:"Tipo: Todos";
-  const prest=$("prest").value.trim()?`Prestación: ${$("prest").value.trim()}`:"Prestación: —";
-  return `Periodo: ${anio} — ${mesName}  |  ${tipo}  |  ${prest}`;
+  const estab=$("estab").value?`EESS: ${$("estab").value}`:"EESS: Todos";
+  return `Periodo de registro: ${anio} — ${mesName}  |  ${estab}  |  Meta diaria: ${$("metaDiaria").value||"—"} FUAs/día`;
 }
-
-function aplicarFiltrosA(dataset){
-  const estab=unesc($("estab").value);
-  const tipo=unesc($("tipo").value);
-  const prest=$("prest").value.trim().toLowerCase();
-  let d=dataset;
-  if(estab) d=d.filter(x=>x.establecimiento===estab);
-  if(tipo)  d=d.filter(x=>x.tipo_profesional===tipo);
-  const profFull=(PROF_SELECTED_FULL||"").trim();
-  if(profFull) d=d.filter(x=>x.profesional===profFull);
-  if(prest) d=d.filter(x=>String(x.servicio||"").toLowerCase().includes(prest)||String(x.id_servicio||"").toLowerCase().includes(prest));
-  return d;
-}
-function aplicarFiltros(){ return aplicarFiltrosA(BASE); }
-
-/* Tendencia global (total filtrado actual vs. mismo filtro en el mes anterior) */
-function calcularTendenciaGlobal(dFiltradoActual){
-  if(!PREV_BASE.length) return null;
-  const prevFiltrado = aplicarFiltrosA(PREV_BASE);
-  const prevTotal = prevFiltrado.length;
-  if(prevTotal===0) return null;
-  const delta = dFiltradoActual.length - prevTotal;
-  const pct = Math.round((delta/prevTotal)*100);
-  return {delta,pct,prevTotal};
-}
-
-/* ══════════════════════════════════════════
-   RENDER PRINCIPAL
-══════════════════════════════════════════ */
-function render(){
-  if(!BASE.length) return;
-  ocultarEsqueletoKPIs();
-  $("printSub").textContent=filtrosTexto();
-  $("printFechas").textContent=$("fechaActualizacion").textContent+" | "+$("fechaDigitacion").textContent;
-  actualizarBannerFiltro();
-  const d=aplicarFiltros();
-  const anio=$("anio").value, mes=$("mes").value;
-  const nDias=diasEnMes(anio,mes);
-  actualizarKPIs(d, nDias);
-  const stats=renderMatrizPersonal(d,nDias);
-  actualizarKPIsCumplimiento(stats, d);
-  renderMatrizEESS(d,nDias);
-  renderRanking();
-  renderCharts(d);
-}
-
-/* Banner destacado de impresión: qué EESS y qué profesional se está viendo */
-const ICON_BUILDING = `<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="10" height="13" rx="1"/><line x1="9" y1="6.5" x2="9" y2="10.5"/><line x1="7" y1="8.5" x2="11" y2="8.5"/><line x1="4" y1="16" x2="14" y2="16"/></svg>`;
-const ICON_USER = `<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3.5 15.5c0-3.3 2.5-5.3 5.5-5.3s5.5 2 5.5 5.3"/></svg>`;
-
-/* Un profesional puede tener producción en más de un EESS en el mismo mes.
-   Se calcula sobre TODA su producción (sin aplicar el filtro de EESS),
-   para que el reporte impreso de esa persona nunca oculte una sede. */
-function desgloseEstablecimientosPersonal(){
-  if(!PROF_SELECTED_FULL) return [];
-  const map=new Map();
-  for(const r of BASE){
-    if(r.profesional!==PROF_SELECTED_FULL) continue;
-    const k=r.establecimiento||"SIN EESS";
-    map.set(k,(map.get(k)||0)+1);
-  }
-  return [...map.entries()].sort((a,b)=>b[1]-a[1]);
-}
-
 function actualizarBannerFiltro(){
-  const estab = $("estab").value ? unesc($("estab").value) : "";
-  const profLabel = PROF_SELECTED_FULL
-    ? (PROF_FULL_TO_LABEL.get(PROF_SELECTED_FULL) || labelConfidencial(PROF_SELECTED_FULL))
-    : "";
-
-  const estabHtml = estab
-    ? `<span class="pf-value">${esc(estab)}</span>`
-    : `<span class="pf-value pf-todos">Todos los establecimientos</span>`;
-  const profHtml = profLabel
-    ? `<span class="pf-value">${esc(profLabel)}</span>`
-    : `<span class="pf-value pf-todos">Todos los profesionales</span>`;
-
-  let desgloseHtml="";
-  const desglose=desgloseEstablecimientosPersonal();
-  if(desglose.length>1){
-    desgloseHtml=`<div class="pf-desglose"><b>Produjo en ${desglose.length} establecimientos este mes:</b> `
-      + desglose.map(([e,c])=>`${esc(e)} (${c})`).join(" · ") + `</div>`;
-  }
-
-  $("printFiltroBanner").innerHTML = `
-    <div class="pf-item">${ICON_BUILDING}<div class="pf-tx"><span class="pf-label">Establecimiento</span>${estabHtml}</div></div>
-    <div class="pf-item">${ICON_USER}<div class="pf-tx"><span class="pf-label">Personal</span>${profHtml}</div></div>
-    ${desgloseHtml}
-  `;
-}
-
-/* ── Números animados (count-up), respeta "reducir movimiento" ── */
-function animateNumber(el, endVal, opts={}){
-  const {duration=650, prefix="", suffix=""} = opts;
-  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const startVal = Number(el.dataset.rawVal||0);
-  el.dataset.rawVal = endVal;
-  if(reduce || !isFinite(startVal) || startVal===endVal){
-    el.textContent = `${prefix}${Math.round(endVal).toLocaleString()}${suffix}`;
-    return;
-  }
-  const t0 = performance.now();
-  function tick(now){
-    const p = Math.min(1, (now-t0)/duration);
-    const eased = 1-Math.pow(1-p,3);
-    const current = Math.round(startVal + (endVal-startVal)*eased);
-    el.textContent = `${prefix}${current.toLocaleString()}${suffix}`;
-    if(p<1) requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-}
-
-/* ── Esqueleto de carga (mientras se descarga el mes) ── */
-const KPI_IDS = ["kpiTotal","kpiProfs","kpiEESS","kpiProm","kpiCumplimiento","kpiAlertas","kpiTendencia"];
-function mostrarEsqueletoKPIs(){
-  KPI_IDS.forEach(id=>$(id).classList.add("skeleton"));
-}
-function ocultarEsqueletoKPIs(){
-  KPI_IDS.forEach(id=>$(id).classList.remove("skeleton"));
-}
-
-/* ── Anillo de progreso de la tarjeta Cumplimiento ── */
-const RING_CIRC = 2*Math.PI*16; // ≈ 100.53, radio del <circle r="16">
-function actualizarAnilloCumplimiento(pct){
-  const ring = $("kpiCumplRing");
-  if(!ring) return;
-  if(pct==null){
-    ring.style.strokeDashoffset = RING_CIRC;
-    ring.style.stroke = "#CBD5C9";
-    return;
-  }
-  const clamped = Math.max(0, Math.min(100, pct));
-  ring.style.strokeDashoffset = RING_CIRC*(1-clamped/100);
-  ring.style.stroke = pct>UMBRAL_ALTO ? "#DC2626" : (pct>=UMBRAL_BAJO ? "#0E9F6E" : "#D97706");
-}
-
-/* ── KPIs dinámicos ── */
-function actualizarKPIs(d, nDias){
-  animateNumber($("kpiTotal"), d.length);
-  animateNumber($("kpiProfs"), new Set(d.map(x=>x.profesional).filter(Boolean)).size);
-  animateNumber($("kpiEESS"), new Set(d.map(x=>x.establecimiento).filter(Boolean)).size);
-  const prom = nDias>0 ? Math.round(d.length/nDias) : 0;
-  animateNumber($("kpiProm"), prom);
-}
-
-/* ── KPIs de cumplimiento / alertas / tendencia ── */
-function actualizarKPIsCumplimiento(stats, dFiltrado){
-  if(stats.cumplPromedio!=null){
-    animateNumber($("kpiCumplimiento"), stats.cumplPromedio, {suffix:"%"});
-  } else {
-    $("kpiCumplimiento").textContent="—"; $("kpiCumplimiento").dataset.rawVal=0;
-  }
-  actualizarAnilloCumplimiento(stats.cumplPromedio);
-
-  animateNumber($("kpiAlertas"), stats.alertas);
-
-  const tend = calcularTendenciaGlobal(dFiltrado);
-  const elVal = $("kpiTendencia"), elSub=$("kpiTendenciaSub");
-  if(!tend){
-    elVal.textContent="—"; elVal.style.color=""; elVal.dataset.rawVal=0;
-    elSub.textContent="Sin datos del mes anterior";
-  } else {
-    const signo = tend.delta>0?"▲":(tend.delta<0?"▼":"▬");
-    const color = tend.delta>0?"#059669":(tend.delta<0?"#dc2626":"#94a3b8");
-    elVal.style.color = color;
-    animateNumber(elVal, Math.abs(tend.pct), {prefix:`${signo} `, suffix:"%"});
-    elSub.textContent = `${dFiltrado.length.toLocaleString()} vs ${tend.prevTotal.toLocaleString()} (mes anterior)`;
-  }
+  $("printFiltroBanner").innerHTML = `<div class="pf-desglose">${esc(filtrosTexto())}</div>`;
 }
 
 /* ══════════════════════════════════════════
-   MATRIZ PERSONAL con heatmap
+   AGREGACIÓN POR DIGITADOR
 ══════════════════════════════════════════ */
-function renderMatrizPersonal(d, nDias){
-  const days=Array.from({length:nDias},(_,i)=>i+1);
-  const modo=$("modo").value;
-  const map=new Map();
-
-  function makeKey(r){
-    const e=r.establecimiento||"SIN EESS";
-    const p=r.profesional||"SIN PROFESIONAL";
-    const t=r.tipo_profesional||"SIN TIPO";
-    if(modo==="resumen") return ["__ALL__",p,t].join("||");
-    return [e,p,t].join("||");
-  }
-
-  for(const r of d){
-    const k=makeKey(r);
-    if(!map.has(k)) map.set(k,{
-      establecimiento:(modo==="resumen")?"TODOS":(r.establecimiento||"SIN EESS"),
-      profesional:r.profesional||"SIN PROFESIONAL",
-      profesion:r.tipo_profesional||"SIN TIPO",
-      dd:Object.fromEntries(days.map(x=>[x,0])),
-      total:0
-    });
-    const obj=map.get(k);
-    const dia=Number(r.dia)||0;
-    if(dia>=1&&dia<=nDias){ obj.dd[dia]+=1; obj.total+=1; }
-  }
-
-  const rows=[...map.values()].sort((a,b)=>b.total-a.total);
-
-  /* umbral heatmap */
-  const allVals=rows.flatMap(r=>days.map(d=>r.dd[d]||0)).filter(v=>v>0);
-  const maxVal=allVals.length?Math.max(...allVals):1;
-  const medVal=maxVal*0.45;
-  const lowVal=maxVal*0.1;
-
-  function cellClass(v){
-    if(!v) return "";
-    if(v>=medVal) return "c-hot";
-    if(v>=lowVal) return "c-med";
-    return "c-low";
-  }
-
-  /* Totales del mes anterior por profesional (mismos filtros de EESS/tipo/prestación) */
-  const prevPorProf=new Map();
-  if(PREV_BASE.length){
-    for(const x of aplicarFiltrosA(PREV_BASE)){
-      const p=x.profesional||"SIN PROFESIONAL";
-      prevPorProf.set(p,(prevPorProf.get(p)||0)+1);
-    }
-  }
-
-  let totalAlertas=0, sumCumpl=0, nCumpl=0;
-
-  let html=`<thead><tr>
-    <th class="left sticky-col th-eess" style="--sticky-left:0">ESTABLECIMIENTO</th>
-    <th class="left sticky-col th-prof sticky-last" style="--sticky-left:150px">PERSONAL (CONFIDENCIAL)</th>
-    <th class="left">PROFESIÓN</th>
-    ${days.map(x=>`<th class="th-day">${x}</th>`).join("")}
-    <th class="th-total">TOTAL</th>
-    <th class="th-total" title="Promedio calculado solo sobre días con al menos 1 registro">PROM/DÍA</th>
-    <th class="th-total">ESTÁNDAR</th>
-    <th class="th-total">% CUMPL.</th>
-    <th class="th-total">TENDENCIA</th>
-  </tr></thead><tbody>`;
-
-  if(rows.length===0){
-    const colspan = 8 + days.length;
-    html += `<tr><td colspan="${colspan}" style="padding:26px 10px;text-align:center">
-      <div style="display:inline-flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted)">
-        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/></svg>
-        <div style="font-family:var(--f-cuerpo);font-size:12px">No hay registros para estos filtros. Prueba quitando alguno (EESS, tipo, profesional o prestación).</div>
-      </div>
-    </td></tr>`;
-  }
-
-  for(const r of rows){
-    const estandar=getEstandar(r.profesion);
-    const diasConReg=days.filter(dy=>(r.dd[dy]||0)>0).length;
-    const promDia=diasConReg>0 ? r.total/diasConReg : 0;
-
-    let badgeClass="badge-neutral", badgeTxt="Sin estándar";
-    if(estandar){
-      const cumplPct=Math.round((promDia/estandar)*100);
-      sumCumpl+=cumplPct; nCumpl++;
-      if(cumplPct>UMBRAL_ALTO){ badgeClass="badge-bad"; badgeTxt=`${cumplPct}% ⚠`; }
-      else if(cumplPct>=UMBRAL_BAJO){ badgeClass="badge-ok"; badgeTxt=`${cumplPct}%`; }
-      else{ badgeClass="badge-warn"; badgeTxt=`${cumplPct}%`; }
-    }
-
-    const celdas=days.map(dy=>{
-      const v=r.dd[dy]||0;
-      let cls=cellClass(v);
-      if(estandar && v>estandar){ cls="c-alert"; totalAlertas++; }
-      cls = cls ? `td-num ${cls}` : "td-num";
-      return `<td class="${cls}">${v||""}</td>`;
-    }).join("");
-
-    const prevTotal=prevPorProf.get(r.profesional);
-    let tendHtml=`<span class="tendencia-flat">—</span>`;
-    if(prevTotal!==undefined && prevTotal>0){
-      const delta=r.total-prevTotal;
-      const pct=Math.round((delta/prevTotal)*100);
-      if(delta>0) tendHtml=`<span class="tendencia-up">▲ ${pct}%</span>`;
-      else if(delta<0) tendHtml=`<span class="tendencia-down">▼ ${Math.abs(pct)}%</span>`;
-      else tendHtml=`<span class="tendencia-flat">▬ 0%</span>`;
-    }
-
-    html+=`<tr>
-      <td class="td-eess sticky-col" style="--sticky-left:0">${esc(r.establecimiento)}</td>
-      <td class="td-prof sticky-col sticky-last" style="--sticky-left:150px">${esc(labelConfidencial(r.profesional))}</td>
-      <td class="td-prof-tipo">${esc(r.profesion)}</td>
-      ${celdas}
-      <td class="td-total">${r.total}</td>
-      <td class="td-num">${promDia.toFixed(1)}</td>
-      <td class="td-num">${estandar??"—"}</td>
-      <td><span class="badge-cumpl ${badgeClass}">${badgeTxt}</span></td>
-      <td>${tendHtml}</td>
-    </tr>`;
-  }
-  html+="</tbody>";
-
-  $("matrizPersonal").innerHTML=html;
-
-  return{
-    alertas: totalAlertas,
-    cumplPromedio: nCumpl ? Math.round(sumCumpl/nCumpl) : null
-  };
-}
-
-/* ══════════════════════════════════════════
-   MATRIZ EESS
-══════════════════════════════════════════ */
-function renderMatrizEESS(d,nDias){
-  const days=Array.from({length:nDias},(_,i)=>i+1);
-  const map=new Map();
-  for(const r of d){
-    const k=r.establecimiento||"SIN EESS";
-    if(!map.has(k)) map.set(k,{dd:Object.fromEntries(days.map(x=>[x,0])),total:0});
-    const obj=map.get(k);
-    const dia=Number(r.dia)||0;
-    if(dia>=1&&dia<=nDias){ obj.dd[dia]+=1; obj.total+=1; }
-  }
-  const rows=[...map.entries()].map(([k,v])=>({k,...v})).sort((a,b)=>b.total-a.total);
-  let html=`<thead><tr><th class="left sticky-col th-eess" style="--sticky-left:0">EESS</th>${days.map(x=>`<th class="th-day">${x}</th>`).join("")}<th class="th-total">TOTAL</th></tr></thead><tbody>`;
-  if(rows.length===0){
-    html += `<tr><td colspan="${2+days.length}" style="padding:26px 10px;text-align:center">
-      <div style="display:inline-flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted)">
-        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/></svg>
-        <div style="font-family:var(--f-cuerpo);font-size:12px">No hay registros para estos filtros.</div>
-      </div>
-    </td></tr>`;
-  }
-  for(const r of rows){
-    html+=`<tr>
-      <td class="td-eess sticky-col sticky-last" style="--sticky-left:0">${esc(r.k)}</td>
-      ${days.map(dy=>`<td class="td-num">${r.dd[dy]||""}</td>`).join("")}
-      <td class="td-total">${r.total}</td>
-    </tr>`;
-  }
-  html+="</tbody>";
-  $("matrizEESS").innerHTML=html;
-}
-
-/* ══════════════════════════════════════════
-   RANKING DE PRODUCCIÓN (Personal de Salud)
-══════════════════════════════════════════ */
-let RANKING_METRIC = "cumpl"; // 'cumpl' | 'total' | 'promedio'
-
-function computeRanking(d, nDias){
+function agregarPorDigitador(d, nDias){
   const map = new Map();
   for(const r of d){
-    const p = (r.profesional||"").trim();
-    if(!p || p.toUpperCase()==="SIN PROFESIONAL") continue;
-    const t = r.tipo_profesional || "SIN TIPO";
-    const key = p+"||"+t;
-    if(!map.has(key)) map.set(key,{
-      profesional:p, profesion:t,
-      dd:Object.fromEntries(Array.from({length:nDias},(_,i)=>[i+1,0])),
-      total:0
+    const dni = r.digitador_dni;
+    if(!map.has(dni)) map.set(dni, {
+      dni,
+      dd: Object.fromEntries(Array.from({length:nDias},(_,i)=>[i+1,{n:0,horas:[]}])),
+      total: 0, lags: []
     });
-    const obj = map.get(key);
-    const dia = Number(r.dia)||0;
-    if(dia>=1 && dia<=nDias){ obj.dd[dia]+=1; obj.total+=1; }
+    const obj = map.get(dni);
+    const dia = Number(r.dia_registro)||0;
+    if(dia>=1 && dia<=nDias){
+      obj.dd[dia].n += 1;
+      if(r.hora_registro) obj.dd[dia].horas.push(r.hora_registro);
+      obj.total += 1;
+    }
+    if(r.fecha_atencion && r.fecha_registro){
+      const lag = Math.round((new Date(r.fecha_registro)-new Date(r.fecha_atencion))/86400000);
+      if(!isNaN(lag) && lag>=0) obj.lags.push(lag);
+    }
   }
-  return [...map.values()].map(r=>{
-    const diasConReg = Object.values(r.dd).filter(v=>v>0).length;
-    const promDia = diasConReg>0 ? r.total/diasConReg : 0;
-    const estandar = getEstandar(r.profesion);
-    const cumplPct = estandar ? Math.round((promDia/estandar)*100) : null;
-    return {...r, diasConReg, promDia, estandar, cumplPct};
+  return [...map.values()].map(o=>{
+    const diasConReg = Object.values(o.dd).filter(x=>x.n>0).length;
+    const promDia = diasConReg>0 ? o.total/diasConReg : 0;
+    const meta = Number($("metaDiaria").value)||0;
+    const cumplPct = meta>0 ? Math.round((promDia/meta)*100) : null;
+    // Total de horas digitadas = suma de (última - primera hora) de cada día trabajado
+    let minutosTotal = 0;
+    for(const dia of Object.values(o.dd)){
+      if(dia.horas.length<2) continue;
+      const mins = dia.horas.map(h=>{ const [hh,mm]=h.split(":").map(Number); return hh*60+mm; });
+      minutosTotal += Math.max(...mins)-Math.min(...mins);
+    }
+    const info = infoDigitador(o.dni);
+    return {...o, ...info, diasConReg, promDia, cumplPct, minutosTotal};
   });
 }
-
-function ordenarRanking(rows, metric){
-  const arr=[...rows];
-  if(metric==="total") arr.sort((a,b)=>b.total-a.total);
-  else if(metric==="promedio") arr.sort((a,b)=>b.promDia-a.promDia);
-  else arr.sort((a,b)=>{
-    const av=a.cumplPct==null?-1:a.cumplPct, bv=b.cumplPct==null?-1:b.cumplPct;
-    if(bv!==av) return bv-av;
-    return b.total-a.total; // desempate
-  });
-  return arr;
+function fmtHoras(min){
+  if(!min) return "0h";
+  const h=Math.floor(min/60), m=min%60;
+  return h>0 ? `${h}h ${m}m` : `${m}m`;
 }
 
-function valorRanking(r, metric){
-  if(metric==="total") return String(r.total);
-  if(metric==="promedio") return r.promDia.toFixed(1);
-  return r.cumplPct==null ? "—" : r.cumplPct+"%";
+/* ══════════════════════════════════════════
+   KPIs
+══════════════════════════════════════════ */
+function actualizarKPIs(d, nDias, totAnt){
+  const rows = agregarPorDigitador(d, nDias);
+  const total = d.length;
+  const nDig = rows.length;
+  const promDiaGlobal = rows.length ? (rows.reduce((a,r)=>a+r.promDia,0)/rows.length) : 0;
+  const horasTotal = rows.reduce((a,r)=>a+r.minutosTotal,0);
+
+  $("kpiTotal").textContent = total; $("kpiTotal").classList.remove("skeleton");
+  $("kpiProfs").textContent = nDig; $("kpiProfs").classList.remove("skeleton");
+  $("kpiHoras").textContent = fmtHoras(horasTotal); $("kpiHoras").classList.remove("skeleton");
+  $("kpiProm").textContent = promDiaGlobal.toFixed(1); $("kpiProm").classList.remove("skeleton");
+
+  const conMeta = rows.filter(r=>r.cumplPct!=null);
+  const cumplProm = conMeta.length ? Math.round(conMeta.reduce((a,r)=>a+r.cumplPct,0)/conMeta.length) : 0;
+  $("kpiCumplimiento").textContent = cumplProm+"%"; $("kpiCumplimiento").classList.remove("skeleton");
+  const ring = $("kpiCumplRing");
+  const c = 2*Math.PI*16;
+  ring.style.strokeDasharray = c;
+  ring.style.strokeDashoffset = c - (Math.min(cumplProm,100)/100)*c;
+  ring.style.stroke = cumplProm>UMBRAL_ALTO ? "#DC2626" : (cumplProm>=UMBRAL_BAJO ? "#0E9F6E" : "#D97706");
+
+  const demoras = d.filter(r=>{
+    if(!r.fecha_atencion || !r.fecha_registro) return false;
+    const lag = Math.round((new Date(r.fecha_registro)-new Date(r.fecha_atencion))/86400000);
+    return lag>30;
+  }).length;
+  $("kpiAlertas").textContent = demoras; $("kpiAlertas").classList.remove("skeleton");
+
+  let tendTxt="—";
+  if(totAnt>0){
+    const delta = Math.round(((total-totAnt)/totAnt)*100);
+    tendTxt = (delta>=0?"▲ +":"▼ ")+Math.abs(delta)+"%";
+  } else if(total>0){ tendTxt="— (sin mes previo)"; }
+  $("kpiTendencia").textContent = tendTxt; $("kpiTendencia").classList.remove("skeleton");
+  $("kpiTendenciaSub").textContent = `${total} vs ${totAnt} (mes anterior)`;
+
+  return rows;
 }
 
-function mensajeAliento(pos, r){
-  if(pos===1) return "🏆 ¡Felicidades! Lidera la producción de este periodo.";
-  if(pos===2) return "🥈 ¡Muy cerca del primer lugar, sigue así!";
-  if(pos===3) return "🥉 ¡Excelente ubicación, un empujón más!";
-  if(r.cumplPct!=null && r.cumplPct>=UMBRAL_ALTO) return "⚠ Muy por encima del estándar, revisa el registro.";
-  if(r.cumplPct!=null && r.cumplPct>=100) return "🔥 Excelente ritmo de producción.";
-  if(r.cumplPct!=null && r.cumplPct>=UMBRAL_BAJO) return "👍 Buen avance, continúa así.";
-  if(r.cumplPct!=null) return "⚡ Puedes mejorar, ¡ánimo!";
-  return "Sin estándar de referencia";
-}
-
-function renderRanking(){
-  const nDias = diasEnMes($("anio").value, $("mes").value);
-  const d = aplicarFiltros();
-  const rows = ordenarRanking(computeRanking(d, nDias), RANKING_METRIC);
-
-  const podioEl = $("rankingPodio");
-  const listaEl = $("rankingLista");
-
+/* ══════════════════════════════════════════
+   DIRECTORIO
+══════════════════════════════════════════ */
+function renderDirectorio(rows){
+  const grid = $("directorioGrid");
   if(!rows.length){
-    podioEl.innerHTML="";
-    listaEl.innerHTML = `<div class="muted" style="padding:24px 10px;text-align:center">
-      No hay datos suficientes para armar el ranking con estos filtros.
-    </div>`;
+    grid.innerHTML = `<div class="dir-empty">Sin digitación registrada con estos filtros.</div>`;
     return;
   }
+  const ordenado = [...rows].sort((a,b)=>b.total-a.total);
+  grid.innerHTML = ordenado.map((r,i)=>{
+    const rankBadge = i===0?'<div class="dir-rank r1">🥇 1°</div>' : i===1?'<div class="dir-rank r2">🥈 2°</div>' : i===2?'<div class="dir-rank r3">🥉 3°</div>' : "";
+    return `
+    <div class="dir-card g-${claseGenero(r.sexo)}">
+      ${rankBadge}
+      ${avatarHTML(r.dni,"lg")}
+      <div class="dir-body">
+        <div class="dir-name">${esc(r.nombre)}</div>
+        <div class="dir-cargo">${esc(r.cargo)}${r.contrato?" · "+esc(r.contrato):""}</div>
+        <div class="dir-punto">📍 ${esc(r.punto||"Sin punto registrado")}</div>
+        <div class="dir-stats">
+          <div class="dir-stat"><b>${r.total}</b><span>FUAs</span></div>
+          <div class="dir-stat"><b>${r.promDia.toFixed(1)}</b><span>Prom/día</span></div>
+          <div class="dir-stat"><b>${fmtHoras(r.minutosTotal)}</b><span>Horas totales</span></div>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
 
-  const top3 = rows.slice(0,3);
-  const resto = rows.slice(3);
+/* ══════════════════════════════════════════
+   MATRIZ
+══════════════════════════════════════════ */
+function cellClass(n){
+  if(n<=0) return "";
+  if(n>=40) return "c-hot";
+  if(n>=20) return "c-med";
+  return "c-low";
+}
+function renderMatrizDigitador(rows, nDias){
+  let html = `<thead><tr><th class="th-name">Digitador</th>`;
+  for(let i=1;i<=nDias;i++) html+=`<th class="th-day">${i}</th>`;
+  html += `<th class="th-total">Total</th><th class="th-total" style="background:#123049">Horas totales</th></tr></thead><tbody>`;
+  const ordenado = [...rows].sort((a,b)=>b.total-a.total);
+  if(!ordenado.length){
+    html += `<tr><td colspan="${nDias+2}" style="padding:16px">Sin registros con estos filtros.</td></tr>`;
+  }
+  for(const r of ordenado){
+    html += `<tr><td class="td-name">${esc(r.nombre)}<div class="muted" style="font-size:10px">${esc(r.cargo)}</div></td>`;
+    for(let i=1;i<=nDias;i++){
+      const n = r.dd[i]?.n||0;
+      html += `<td class="${cellClass(n)}">${n||""}</td>`;
+    }
+    html += `<td class="th-total">${r.total}</td><td class="th-total" style="background:#F5F3EC;color:#25232A">${fmtHoras(r.minutosTotal)}</td></tr>`;
+  }
+  html += "</tbody>";
+  $("matrizDigitador").innerHTML = html;
+}
+
+/* ══════════════════════════════════════════
+   RANKING
+══════════════════════════════════════════ */
+function ordenarRankingDig(rows, metric){
+  const arr=[...rows];
+  if(metric==="promedio") arr.sort((a,b)=>b.promDia-a.promDia);
+  else if(metric==="horas") arr.sort((a,b)=>b.minutosTotal-a.minutosTotal);
+  else if(metric==="cumpl") arr.sort((a,b)=>{
+    const av=a.cumplPct==null?-1:a.cumplPct, bv=b.cumplPct==null?-1:b.cumplPct;
+    return bv-av;
+  });
+  else arr.sort((a,b)=>b.total-a.total);
+  return arr;
+}
+function valorRankingDig(r, metric){
+  if(metric==="promedio") return r.promDia.toFixed(1);
+  if(metric==="horas") return fmtHoras(r.minutosTotal);
+  if(metric==="cumpl") return r.cumplPct==null?"—":r.cumplPct+"%";
+  return String(r.total);
+}
+function mensajeAlientoDig(pos, r){
+  if(pos===1) return "🏆 ¡Felicidades! Lidera la digitación de este periodo.";
+  if(pos===2) return "🥈 ¡Muy cerca del primer lugar, sigue así!";
+  if(pos===3) return "🥉 ¡Excelente ubicación, un empujón más!";
+  if(r.cumplPct!=null && r.cumplPct>=100) return "🔥 Excelente ritmo de digitación.";
+  if(r.cumplPct!=null && r.cumplPct>=UMBRAL_BAJO) return "👍 Buen avance, continúa así.";
+  return "⚡ Puedes mejorar, ¡ánimo!";
+}
+function renderRankingDig(rows){
+  const ordenado = ordenarRankingDig(rows, RANKING_METRIC_DIG);
+  const podioEl = $("rankingPodioDig"), listaEl = $("rankingListaDig");
+
+  if(!ordenado.length){
+    podioEl.innerHTML="";
+    listaEl.innerHTML = `<div class="muted" style="padding:24px 10px;text-align:center">No hay datos suficientes para el ranking con estos filtros.</div>`;
+    return;
+  }
+  const top3 = ordenado.slice(0,3), resto = ordenado.slice(3);
   const medalla=["🥇","🥈","🥉"], clase=["rk-gold","rk-silver","rk-bronze"];
 
   podioEl.innerHTML = top3.map((r,i)=>`
     <div class="rk-podio-card ${clase[i]}">
+      ${avatarHTML(r.dni,"")}
       <div class="rk-medalla">${medalla[i]}</div>
-      <div class="rk-nombre">${esc(labelConfidencial(r.profesional))}</div>
-      <div class="rk-profesion">${esc(r.profesion)}</div>
-      <div class="rk-valor">${valorRanking(r,RANKING_METRIC)}</div>
-      <div class="rk-sub">Total ${r.total} · Prom/día ${r.promDia.toFixed(1)}${r.estandar?` · Estándar ${r.estandar}/día`:""}</div>
-      <div class="rk-msg">${mensajeAliento(i+1,r)}</div>
+      <div class="rk-nombre">${esc(r.nombre)}</div>
+      <div class="rk-profesion">${esc(r.cargo)}${r.punto?" · "+esc(r.punto):""}</div>
+      <div class="rk-valor">${valorRankingDig(r,RANKING_METRIC_DIG)}</div>
+      <div class="rk-sub">Total ${r.total} · Prom/día ${r.promDia.toFixed(1)} · Horas ${fmtHoras(r.minutosTotal)}</div>
+      <div class="rk-msg">${mensajeAlientoDig(i+1,r)}</div>
     </div>
   `).join("");
 
@@ -1716,121 +1163,104 @@ function renderRanking(){
     return `
     <div class="rk-row">
       <div class="rk-pos">${pos}</div>
+      ${avatarHTML(r.dni,"sm")}
       <div>
-        <div class="rk-info-nombre">${esc(labelConfidencial(r.profesional))}</div>
-        <div class="rk-info-profesion">${esc(r.profesion)}</div>
+        <div class="rk-info-nombre">${esc(r.nombre)}</div>
+        <div class="rk-info-profesion">${esc(r.cargo)}</div>
       </div>
       <div class="rk-stats">
         <span>Total <b>${r.total}</b></span>
         <span>Prom/día <b>${r.promDia.toFixed(1)}</b></span>
-        <span>Cumpl. <b>${r.cumplPct==null?"—":r.cumplPct+"%"}</b></span>
+        <span>Horas <b>${fmtHoras(r.minutosTotal)}</b></span>
       </div>
-      <div class="rk-aliento">${mensajeAliento(pos,r)}</div>
+      <div class="rk-aliento">${mensajeAlientoDig(pos,r)}</div>
     </div>`;
   }).join("");
 }
-
-
-function renderCharts(d){
-  /* EESS */
-  const eCount=new Map();
-  for(const x of d){
-    const k=x.establecimiento||""; if(!k) continue;
-    eCount.set(k,(eCount.get(k)||0)+1);
-  }
-  const topE=[...eCount.entries()].sort((a,b)=>b[1]-a[1]).slice(0,15);
-
-  /* Tipo profesional */
-  const tCount=new Map();
-  for(const x of d){
-    const k=x.tipo_profesional||"SIN DATO";
-    tCount.set(k,(tCount.get(k)||0)+1);
-  }
-  const tArr=[...tCount.entries()].sort((a,b)=>b[1]-a[1]).slice(0,12);
-
-  if(chartEESS) chartEESS.destroy();
-  if(chartTipo)  chartTipo.destroy();
-
-  chartEESS=new Chart($("c_eess"),{
-    type:"bar",
-    data:{ labels:topE.map(x=>x[0]), datasets:[{
-      label:"Registros", data:topE.map(x=>x[1]),
-      backgroundColor: topE.map((_,i)=>{
-        const alpha=0.55+0.45*(i===0?1:(1-i/topE.length));
-        return `rgba(15,42,92,${alpha.toFixed(2)})`;
-      }),
-      borderRadius:5, borderSkipped:false
-    }]},
-    options:{ indexAxis:"y", responsive:true, maintainAspectRatio:false, layout:{padding:{right:34}},
-      plugins:{ legend:{display:false} },
-      scales:{ x:{grid:{color:"#EDEAE0"}}, y:{grid:{display:false},ticks:{font:{size:10}}} }
-    },
-    plugins:[valueLabelPlugin]
-  });
-
-  chartTipo=new Chart($("c_tipo"),{
-    type:"doughnut",
-    data:{ labels:tArr.map(x=>x[0]), datasets:[{
-      data:tArr.map(x=>x[1]),
-      backgroundColor:PALETTE.slice(0,tArr.length),
-      borderWidth:2, borderColor:"#fff", hoverOffset:6
-    }]},
-    options:{ responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{position:"right",labels:{font:{size:10},boxWidth:12,padding:8}} }
-    }
-  });
-}
-
-/* ══════════════════════════════════════════
-   IMPRESIÓN — captura gráficos anuales
-══════════════════════════════════════════ */
-function snapChartToImg(cId,iId){
-  const c=document.getElementById(cId), img=document.getElementById(iId);
-  if(!c||!img) return;
-  try{ img.src=c.toDataURL("image/png",1.0); }catch(e){}
-}
-function chipHTML(label,val,color){
-  return `<span style="display:inline-flex;gap:5px;align-items:center;padding:3px 10px;
-    border-radius:999px;background:${color}1a;color:${color};border:1px solid ${color}55;
-    font-size:10px;font-weight:700">${label}: ${val}</span>`;
-}
-let __modoAntesDeImprimir = null;
-window.addEventListener("beforeprint",()=>{
-  snapChartToImg("c_anio_mes","img_c_anio_mes");
-  snapChartToImg("c_years_total","img_c_years_total");
-  $("printKPIs").innerHTML = [
-    chipHTML("Total registros", $("kpiTotal").textContent, "#1B4A6E"),
-    chipHTML("Profesionales", $("kpiProfs").textContent, "#E49C30"),
-    chipHTML("Establecimientos", $("kpiEESS").textContent, "#6D4FC2"),
-    chipHTML("Cumplimiento promedio", $("kpiCumplimiento").textContent, "#0E9F6E"),
-    chipHTML("Alertas", $("kpiAlertas").textContent, "#DC2626")
-  ].join("");
-
-  /* Reporte de UN profesional específico = su comprobante mensual de FUAS.
-     Se oculta el histórico anual (irrelevante para ese informe) y se
-     obliga a mostrar el detalle por establecimiento, aunque el modo
-     en pantalla estuviera en "Resumen (1 fila)". */
-  const esReportePersonal = !!PROF_SELECTED_FULL;
-  document.body.classList.toggle("print-personal", esReportePersonal);
-  if(esReportePersonal && $("modo").value==="resumen"){
-    __modoAntesDeImprimir = $("modo").value;
-    $("modo").value = "auto";
+document.querySelectorAll("#rkMetricsDig .rk-metric-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("#rkMetricsDig .rk-metric-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    RANKING_METRIC_DIG = btn.dataset.metric;
     render();
-  }
-});
-window.addEventListener("afterprint",()=>{
-  document.body.classList.remove("print-personal");
-  if(__modoAntesDeImprimir){
-    $("modo").value = __modoAntesDeImprimir;
-    __modoAntesDeImprimir = null;
-    render();
-  }
+  });
 });
 
 /* ══════════════════════════════════════════
-   INICIO
+   TABS
 ══════════════════════════════════════════ */
-cargarManifestYAuto();
+function activarTab(nombre){
+  const tabs = {Directorio:"tabDirectorio", Matriz:"tabMatriz", Ranking:"tabRanking"};
+  const cards = {Directorio:"cardDirectorio", Matriz:"cardMatriz", Ranking:"cardRankingDig"};
+  Object.keys(tabs).forEach(k=>{
+    $(tabs[k]).classList.toggle("active", k===nombre);
+    $(cards[k]).style.display = (k===nombre) ? "" : "none";
+  });
+  const titulos = {
+    Directorio: "DIRECTORIO DE DIGITADORES — USPP SATIPO",
+    Matriz: "PRODUCCIÓN DEL DIGITADOR — USPP SATIPO",
+    Ranking: "RANKING DE DIGITACIÓN — USPP SATIPO"
+  };
+  $("printTitle").textContent = titulos[nombre];
+}
+$("tabDirectorio").onclick = ()=>activarTab("Directorio");
+$("tabMatriz").onclick = ()=>activarTab("Matriz");
+$("tabRanking").onclick = ()=>activarTab("Ranking");
+
+/* ══════════════════════════════════════════
+   RENDER PRINCIPAL
+══════════════════════════════════════════ */
+async function render(){
+  const anio = $("anio").value, mes = $("mes").value;
+  if(!anio || !mes) return;
+
+  $("estado").textContent = "⏳ Cargando…";
+
+  let mAnt = Number(mes)-1, aAnt = Number(anio);
+  if(mAnt<1){ mAnt=12; aAnt--; }
+
+  const [datosMes, datosMesAnt] = await Promise.all([ fetchMes(anio, mes), fetchMes(aAnt, mAnt) ]);
+  RAW = datosMes;
+
+  const estabActual = $("estab").value;
+  const estabs = [...new Set(RAW.map(r=>r.establecimiento).filter(Boolean))].sort();
+  $("estab").innerHTML = `<option value="">Todos</option>` + estabs.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
+  if(estabs.includes(estabActual)) $("estab").value = estabActual;
+
+  const totAnt = datosMesAnt.filter(r=> !$("estab").value || r.establecimiento===$("estab").value).length;
+
+  const ahora = new Date();
+  const pad = n=>String(n).padStart(2,"0");
+  const fechaAhora = `${pad(ahora.getDate())}/${pad(ahora.getMonth()+1)}/${ahora.getFullYear()} `
+    + `${ahora.getHours()%12||12}:${pad(ahora.getMinutes())} ${ahora.getHours()>=12?"PM":"AM"}`;
+  $("fechaActualizacion").textContent = `Actualizado: ${fechaAhora}`;
+
+  const d = aplicarFiltros();
+  $("fechaDigitacion").textContent  = `${d.length} FUAs digitados en el periodo`;
+  $("printFechaFooter").textContent = `Actualizado: ${fechaAhora} | ${d.length} FUAs digitados en el periodo`;
+
+  if(!d.length){
+    $("estado").textContent = "⚠ Sin digitación en este periodo";
+    $("directorioGrid").innerHTML = `<div class="dir-empty">No se encontraron FUAs digitados en el periodo elegido.</div>`;
+    $("matrizDigitador").innerHTML = "";
+    $("rankingListaDig").innerHTML=""; $("rankingPodioDig").innerHTML="";
+    actualizarKPIs([], diasEnMes(anio,mes), totAnt);
+    return;
+  }
+  $("estado").textContent = "✅ Datos cargados";
+
+  $("printSub").textContent = filtrosTexto();
+  $("printFechas").textContent = $("fechaActualizacion").textContent+" | "+$("fechaDigitacion").textContent;
+  actualizarBannerFiltro();
+  const nDias = diasEnMes(anio, mes);
+  const rows = actualizarKPIs(d, nDias, totAnt);
+  renderDirectorio(rows);
+  renderMatrizDigitador(rows, nDias);
+  renderRankingDig(rows);
+}
+
+cargarTodo();
 </script>
+
 </body>
 </html>

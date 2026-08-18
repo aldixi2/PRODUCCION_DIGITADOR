@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>ADMIN - USPP Satipo | Actualizar Base</title>
+  <title>ADMIN - USPP Satipo | Digitador — Actualizar Base</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.19.3/dist/xlsx.full.min.js"></script>
 
@@ -25,13 +25,13 @@
   <div class="row">
     <img src="logo.png" alt="USPP Satipo" onerror="this.style.display='none'">
     <div>
-      <h1>ADMIN — Actualizar base (USPP Satipo)</h1>
+      <h1>ADMIN — Actualizar base (USPP Satipo · Digitador)</h1>
       <span class="badge" id="estado">Listo</span>
     </div>
   </div>
   <div class="row">
-    <button onclick="descargarBase()">⬇️ Descargar base.json</button>
-    <a href="./index.html" style="text-decoration:none"><button>Ver dashboard (personal)</button></a>
+    <button onclick="descargarBase()">⬇️ Descargar dig_*.json</button>
+    <a href="./index.html" style="text-decoration:none"><button>Ver dashboard (digitador)</button></a>
   </div>
 </header>
 
@@ -39,10 +39,13 @@
   <b>1) Selecciona tus Excel (varios)</b><br><br>
   <input type="file" id="excel" accept=".xlsx,.xls" multiple>
   <div class="hint">
-    • Selecciona tus archivos de <b>D:\ANALISIS DE DATOS\BASE DE DATOS 2026</b> (puedes seleccionar muchos).<br>
-    • Esto consolidará todo y al presionar <b>"Descargar base.json"</b> se descargará un archivo por cada mes
-      (<b>base_AAAA_MM.json</b>) más un <b>manifest.json</b>.<br>
-    • Copia todos esos archivos a <b>C:\xampp\htdocs\dashboard\data\</b> (reemplazando lo anterior) y el personal ya verá todo actualizado.
+    • Selecciona tus archivos de <b>D:\ANALISIS DE DATOS\BASE DE DATOS 2026</b> — la misma carpeta que usas para el
+      proyecto de Personal de Salud (puedes seleccionar muchos).<br>
+    • Este panel solo guarda filas que tengan <b>Digitador</b> y <b>Fecha Registro</b> — se agrupan por el mes en que
+      se REGISTRÓ el FUA, no por el mes de atención.<br>
+    • Al presionar <b>"Descargar dig_*.json"</b> se descargará un archivo por cada mes (<b>dig_AAAA_MM.json</b>) más un
+      <b>manifest.json</b>.<br>
+    • Copia todos esos archivos a la carpeta <b>data\</b> de este proyecto (reemplazando lo anterior) y recarga el dashboard.
   </div>
 </div>
 
@@ -53,9 +56,7 @@
 </div>
 
 <script>
-let BASE = [];     // filas normalizadas
-let META = {};     // info de columnas detectadas
-
+let BASE = [];
 const $ = (id)=>document.getElementById(id);
 
 $("excel").addEventListener("change", async (e)=>{
@@ -63,10 +64,8 @@ $("excel").addEventListener("change", async (e)=>{
   if(!files.length) return;
 
   BASE = [];
-  META = {};
   $("estado").textContent = `Leyendo ${files.length} Excel…`;
-
-  let headersMuestra = null;
+  let omitidosSinDigitador = 0, omitidosSinFechaReg = 0;
 
   for (let i=0; i<files.length; i++){
     const file = files[i];
@@ -77,22 +76,18 @@ $("excel").addEventListener("change", async (e)=>{
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(ws, { defval:"" });
 
-    if (!headersMuestra && rows.length){
-      headersMuestra = Object.keys(rows[0]);
-      META.headers = headersMuestra;
-    }
-
-    // Normalizar cada fila a un formato estándar para el dashboard
     for(const r of rows){
       const n = normalizarFila(r, file.name);
+      if(n === "sin_digitador"){ omitidosSinDigitador++; continue; }
+      if(n === "sin_fecha_reg"){ omitidosSinFechaReg++; continue; }
       if(n) BASE.push(n);
     }
 
     await new Promise(res=>setTimeout(res, 10));
   }
 
-  $("estado").textContent = `Listo: ${BASE.length} registros`;
-  renderResumen(files.length);
+  $("estado").textContent = `Listo: ${BASE.length} FUAs digitados`;
+  renderResumen(files.length, omitidosSinDigitador, omitidosSinFechaReg);
 });
 
 function pick(r, posibles){
@@ -101,49 +96,9 @@ function pick(r, posibles){
   }
   return "";
 }
-
 function soloDigitos(v){
   return String(v==null?"":v).replace(/\D/g,"");
 }
-
-function normalizarFila(r, sourceName){
-  // 👇 Nombres reales del export SIS (RAtenDet) como primera opción, con variantes de respaldo
-  const fechaRaw   = pick(r, ["Fecha Atencion","Fecha Atención","FECHA","Fecha","FEC_ATEN","F_ATENCION"]);
-  const estab      = String(pick(r, ["EESS","Establecimiento","ESTABLECIMIENTO","Establecimiento de Salud","Nombre del Establecimiento","EE.SS"])).trim();
-  const dniProf    = String(pick(r, ["DNI Resp. Aten.","DNI Resp Aten","DNI Responsable","DNI del Profesional","DNI PROFESIONAL"])).trim();
-  const prof       = String(pick(r, ["Profesional","PROFESIONAL","Nombres Profesional","Nombre del Profesional"])).trim();
-  const tipo       = String(pick(r, ["Tipo Profesional","TIPO PROFESIONAL","Tipo_Profesional"])).trim();
-  const servicio   = String(pick(r, ["Servicio"," Servicio","SERVICIO","Prestación","Prestacion","Procedimiento"])).trim();
-  const idServicio = String(pick(r, ["ID Servicio","ID SERVICIO","IDServicio","CPMS"])).trim();
-
-  const digitadorRaw = pick(r, ["Digitador","DIGITADOR","Usuario Digitador","Usuario Registro"]);
-  const fechaRegRaw   = pick(r, ["Fecha Registro","Fecha de Registro","FECHA REGISTRO"]);
-  const horaRegRaw    = pick(r, ["Hora Registro","Hora de Registro","HORA REGISTRO"]);
-
-  const f = parseFecha(fechaRaw);
-  if(!f || !estab) return null;
-
-  const fr = parseFecha(fechaRegRaw);
-  const hr = parseHora(horaRegRaw);
-
-  return {
-    anio: f.y, mes: f.m, dia: f.d, fecha: f.iso,
-    establecimiento: estab,
-    profesional: prof,
-    tipo_profesional: tipo,
-    dni_prof: soloDigitos(dniProf),
-    servicio: servicio,
-    id_servicio: idServicio,
-    digitador_dni: soloDigitos(digitadorRaw),
-    fecha_registro: fr ? fr.iso : "",
-    anio_registro: fr ? fr.y : null,
-    mes_registro: fr ? fr.m : null,
-    dia_registro: fr ? fr.d : null,
-    hora_registro: hr,
-    source: sourceName
-  };
-}
-
 function parseHora(v){
   if(v===null || v===undefined || v==="") return "";
   if(typeof v === "number"){
@@ -157,56 +112,71 @@ function parseHora(v){
   return "";
 }
 
-function parseFecha(v){
-  if(!v) return null;
+function normalizarFila(r, sourceName){
+  const digitadorRaw = pick(r, ["Digitador","DIGITADOR","Usuario Digitador","Usuario Registro"]);
+  const digitadorDni = soloDigitos(digitadorRaw);
+  if(!digitadorDni) return "sin_digitador";
 
-  // fecha serial de Excel
-  if(typeof v === "number"){
-    const d = XLSX.SSF.parse_date_code(v);
-    if(!d) return null;
-    return { y:d.y, m:d.m, d:d.d, iso: `${d.y}-${String(d.m).padStart(2,"0")}-${String(d.d).padStart(2,"0")}` };
-  }
+  const fechaRegRaw = pick(r, ["Fecha Registro","Fecha de Registro","FECHA REGISTRO"]);
+  const fr = parseFecha(fechaRegRaw);
+  if(!fr) return "sin_fecha_reg";
 
-  const s = String(v).trim().replaceAll("-", "/");
-  if(!s) return null;
+  const fechaAtenRaw = pick(r, ["Fecha Atencion","Fecha Atención","FECHA","Fecha"]);
+  const fa = parseFecha(fechaAtenRaw);
+  const horaRegRaw = pick(r, ["Hora Registro","Hora de Registro","HORA REGISTRO"]);
+  const estab = String(pick(r, ["EESS","Establecimiento","ESTABLECIMIENTO","Establecimiento de Salud"])).trim();
+  const servicio = String(pick(r, ["Servicio"," Servicio","SERVICIO","Prestación","Prestacion"])).trim();
+  const idServicio = String(pick(r, ["ID Servicio","ID SERVICIO","IDServicio","CPMS"])).trim();
 
-  // dd/mm/yyyy
-  if(s.includes("/")){
-    const p = s.split("/");
-    if(p.length===3){
-      const dd = parseInt(p[0],10), mm=parseInt(p[1],10), yy=parseInt(p[2],10);
-      if(yy>1900 && mm>=1 && mm<=12 && dd>=1 && dd<=31){
-        return { y:yy, m:mm, d:dd, iso:`${yy}-${String(mm).padStart(2,"0")}-${String(dd).padStart(2,"0")}` };
-      }
-    }
-  }
-
-  // yyyy-mm-dd (por si acaso)
-  if(String(v).includes("-")){
-    const q = String(v).split("-");
-    if(q.length>=3){
-      const yy = parseInt(q[0],10), mm=parseInt(q[1],10), dd=parseInt(q[2],10);
-      if(yy>1900) return { y:yy, m:mm, d:dd, iso:`${yy}-${String(mm).padStart(2,"0")}-${String(dd).padStart(2,"0")}` };
-    }
-  }
-
-  return null;
+  return {
+    digitador_dni: digitadorDni,
+    anio_registro: fr.y, mes_registro: fr.m, dia_registro: fr.d,
+    fecha_registro: fr.iso,
+    hora_registro: parseHora(horaRegRaw),
+    fecha_atencion: fa ? fa.iso : "",
+    establecimiento: estab,
+    servicio: servicio,
+    id_servicio: idServicio,
+    source: sourceName
+  };
 }
 
-function renderResumen(nFiles){
-  const years = [...new Set(BASE.map(x=>x.anio))].sort((a,b)=>a-b);
-  const meses = [...new Set(BASE.map(x=>x.mes))].sort((a,b)=>a-b);
-  const estabs = [...new Set(BASE.map(x=>x.establecimiento))].slice(0,20);
+function parseFecha(v){
+  if(v===null || v===undefined || v==="") return null;
+  let d = null;
+  if (typeof v === "number"){
+    d = new Date(Math.round((v-25569)*86400*1000)); // fecha serial de Excel
+  } else {
+    const s = String(v).trim();
+    let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+    if (m){
+      let yy = parseInt(m[3],10); if(yy<100) yy += 2000;
+      d = new Date(yy, parseInt(m[2],10)-1, parseInt(m[1],10));
+    } else {
+      m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (m) d = new Date(parseInt(m[1],10), parseInt(m[2],10)-1, parseInt(m[3],10));
+    }
+  }
+  if (!d || isNaN(d)) return null;
+  const y=d.getFullYear(), mo=d.getMonth()+1, da=d.getDate();
+  return { y, m:mo, d:da, iso: `${y}-${String(mo).padStart(2,"0")}-${String(da).padStart(2,"0")}` };
+}
 
-  $("resumen").textContent =
-`Archivos leídos: ${nFiles}
-Registros consolidados: ${BASE.length}
-
-Años: ${years.join(", ") || "-"}
-Meses: ${meses.join(", ") || "-"}
-Ejemplos de Establecimientos (20): 
-- ${estabs.join("\n- ") || "-"}
-`;
+function renderResumen(nArchivos, omitidosSinDigitador, omitidosSinFechaReg){
+  const porMes = {};
+  for(const r of BASE){
+    const k = r.anio_registro+"-"+String(r.mes_registro).padStart(2,"0");
+    porMes[k] = (porMes[k]||0)+1;
+  }
+  const digitadoresUnicos = new Set(BASE.map(r=>r.digitador_dni)).size;
+  $("resumen").textContent = JSON.stringify({
+    archivos_leidos: nArchivos,
+    fuas_digitados_validos: BASE.length,
+    digitadores_unicos: digitadoresUnicos,
+    omitidos_sin_digitador: omitidosSinDigitador,
+    omitidos_sin_fecha_registro: omitidosSinFechaReg,
+    por_mes_de_registro: porMes
+  }, null, 2);
 }
 
 function descargarBase(){
@@ -214,12 +184,9 @@ function descargarBase(){
     alert("Primero carga los Excel.");
     return;
   }
-
-  // Agrupar por (año, mes) — igual que consolidar.py — para que calce con
-  // lo que index.html espera leer (manifest.json + base_AAAA_MM.json)
   const buckets = new Map();
   for(const r of BASE){
-    const key = r.anio+"_"+String(r.mes).padStart(2,"0");
+    const key = r.anio_registro+"_"+String(r.mes_registro).padStart(2,"0");
     if(!buckets.has(key)) buckets.set(key, []);
     buckets.get(key).push(r);
   }
@@ -242,10 +209,9 @@ function descargarBase(){
   claves.forEach((key, i)=>{
     const [anio, mesStr] = key.split("_");
     const mes = parseInt(mesStr,10);
-    const fileName = `base_${anio}_${mesStr}.json`;
+    const fileName = `dig_${anio}_${mesStr}.json`;
     disponibles.push({anio:parseInt(anio,10), mes, file: fileName});
     ultimo = {anio:parseInt(anio,10), mes};
-    // pequeño retraso entre descargas para que el navegador no las bloquee
     setTimeout(()=>descargarArchivo(fileName, buckets.get(key)), i*250);
   });
 
@@ -253,13 +219,12 @@ function descargarBase(){
     disponibles,
     ultimo: ultimo || {anio:0, mes:0},
     generado: new Date().toISOString().slice(0,19).replace("T"," "),
-    origen: "Cargado desde el navegador (admin.html)"
+    origen: "Cargado desde el navegador (admin.html) — Producción del Digitador"
   };
   setTimeout(()=>descargarArchivo("manifest.json", manifest), claves.length*250 + 250);
 
-  alert(`Se descargarán ${claves.length} archivo(s) mensual(es) + manifest.json.\nMuévelos todos a la carpeta "data" del dashboard (reemplazando lo anterior).`);
+  alert(`Se descargarán ${claves.length} archivo(s) mensual(es) + manifest.json.\nMuévelos todos a la carpeta "data" de este proyecto (reemplazando lo anterior).`);
 }
 </script>
-
 </body>
 </html>
