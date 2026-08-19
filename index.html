@@ -718,6 +718,10 @@
   <div class="card no-print">
     <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="5.3"/><line x1="12.3" y1="12.3" x2="16.5" y2="16.5"/></svg></div> Filtros</div>
     <div class="filtros-nota">
+      Se agrupa por <b>fecha de registro</b> (fecha real de digitación). El <b>"Total de horas digitadas"</b> es una
+      aproximación: por cada día trabajado, se mide el rango entre el primer y el último FUA registrado por esa persona
+      ese día, y se suman todos los días del periodo. No es un reloj de entrada/salida real, es lo mejor que se puede
+      calcular con las horas que trae el Excel.
     </div>
     <div class="row">
       <div class="fg">
@@ -763,12 +767,12 @@
   <div class="card" id="cardDirectorio">
     <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3.5 15.5c0-3.3 2.5-5.3 5.5-5.3s5.5 2 5.5 5.3"/></svg></div> Directorio de digitadores</div>
     <div class="dir-legend">
-  <span><i style="background:linear-gradient(150deg,var(--avatar-m-1),var(--avatar-m-2))"></i> Masculino</span>
-  <span><i style="background:linear-gradient(150deg,var(--avatar-f-1),var(--avatar-f-2))"></i> Femenino</span>
-  <span><i style="background:linear-gradient(150deg,var(--avatar-x-1),var(--avatar-x-2))"></i> Sin dato</span>
-</div>
-
-<div class="dir-grid" id="directorioGrid"></div>
+      <span><i style="background:linear-gradient(150deg,var(--avatar-m-1),var(--avatar-m-2))"></i> Masculino</span>
+      <span><i style="background:linear-gradient(150deg,var(--avatar-f-1),var(--avatar-f-2))"></i> Femenino</span>
+      <span><i style="background:linear-gradient(150deg,var(--avatar-x-1),var(--avatar-x-2))"></i> Sin dato</span>
+      <span>📷 = espacio listo para foto real (edita <code>digitadores.json</code> → campo "foto")</span>
+    </div>
+    <div class="dir-grid" id="directorioGrid"></div>
   </div>
 
   <!-- MATRIZ -->

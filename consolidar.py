@@ -37,7 +37,7 @@ import pandas as pd
 # ==========================
 # CONFIG
 # ==========================
-EXCEL_DIR = r"C:\Users\USUARIO\Desktop\BASE DE DATOS\Escritorio\USPP\BASE DE DATOS 2"  # <-- misma carpeta que usa el proyecto de Personal
+EXCEL_DIR = r"C:\Users\USUARIO\Desktop\BASE DE DATOS\Escritorio\USPP\BASE DE DATOS 2"  # <-- tu carpeta real de excels
 OUT_DIR = os.path.join(os.path.dirname(__file__), "data")
 LIMIT_FILES = 0  # 0 = sin límite
 
