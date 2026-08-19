@@ -59,11 +59,33 @@
 let BASE = [];
 const $ = (id)=>document.getElementById(id);
 
+function extraerTimestampArchivo(nombre){
+  // 'RAtenDet_18-08-2026_14-59-15-puerto ocopa.xlsx' -> Date(2026,7,18,14,59,15)
+  const m = nombre.match(/(\d{2})-(\d{2})-(\d{4})_(\d{2})-(\d{2})-(\d{2})/);
+  if(!m) return null;
+  const [_, dd, mm, yyyy, hh, mi, ss] = m.map(Number);
+  const d = new Date(yyyy, mm-1, dd, hh, mi, ss);
+  return isNaN(d) ? null : d;
+}
+
 $("excel").addEventListener("change", async (e)=>{
-  const files = [...e.target.files];
+  let files = [...e.target.files];
   if(!files.length) return;
 
-  BASE = [];
+  // IMPORTANTE: los RAtenDet del SIS son acumulados (cada exportación nueva trae
+  // TODO el historial otra vez). Ordenamos cronológicamente por la fecha/hora en
+  // el propio nombre del archivo, para que al deduplicar por FUA se quede con la
+  // versión MÁS RECIENTE de cada una (ver Map "vistos" más abajo).
+  files.sort((a,b)=>{
+    const ta = extraerTimestampArchivo(a.name), tb = extraerTimestampArchivo(b.name);
+    if(ta && tb) return ta-tb;
+    if(ta) return -1;
+    if(tb) return 1;
+    return a.name.localeCompare(b.name);
+  });
+
+  const vistos = new Map(); // fua -> registro (la versión más reciente sobreescribe)
+  let totalFilas = 0, sinFuaContador = 0;
   $("estado").textContent = `Leyendo ${files.length} Excel…`;
   let omitidosSinDigitador = 0, omitidosSinFechaReg = 0;
 
@@ -75,19 +97,30 @@ $("excel").addEventListener("change", async (e)=>{
     const wb = XLSX.read(buf, { type:"array" });
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(ws, { defval:"" });
+    totalFilas += rows.length;
 
     for(const r of rows){
       const n = normalizarFila(r, file.name);
       if(n === "sin_digitador"){ omitidosSinDigitador++; continue; }
       if(n === "sin_fecha_reg"){ omitidosSinFechaReg++; continue; }
-      if(n) BASE.push(n);
+      if(!n) continue;
+
+      let fua = String(pick(r, ["FUA","Fua","N FUA","Nro FUA","Numero FUA","N° FUA"])).trim();
+      if(!fua){
+        sinFuaContador++;
+        fua = `__sinfua__${file.name}__${sinFuaContador}`;
+      }
+      vistos.set(fua, n); // si ya existía (de un archivo más viejo), esta versión la reemplaza
     }
 
     await new Promise(res=>setTimeout(res, 10));
   }
 
-  $("estado").textContent = `Listo: ${BASE.length} FUAs digitados`;
-  renderResumen(files.length, omitidosSinDigitador, omitidosSinFechaReg);
+  BASE = [...vistos.values()];
+  const duplicadosQuitados = totalFilas - BASE.length - omitidosSinDigitador - omitidosSinFechaReg;
+
+  $("estado").textContent = `Listo: ${BASE.length} FUAs digitados (se descartaron ${Math.max(duplicadosQuitados,0)} filas duplicadas)`;
+  renderResumen(files.length, omitidosSinDigitador, omitidosSinFechaReg, duplicadosQuitados, sinFuaContador);
 });
 
 function pick(r, posibles){
@@ -162,7 +195,7 @@ function parseFecha(v){
   return { y, m:mo, d:da, iso: `${y}-${String(mo).padStart(2,"0")}-${String(da).padStart(2,"0")}` };
 }
 
-function renderResumen(nArchivos, omitidosSinDigitador, omitidosSinFechaReg){
+function renderResumen(nArchivos, omitidosSinDigitador, omitidosSinFechaReg, duplicadosQuitados, sinFuaContador){
   const porMes = {};
   for(const r of BASE){
     const k = r.anio_registro+"-"+String(r.mes_registro).padStart(2,"0");
@@ -173,6 +206,8 @@ function renderResumen(nArchivos, omitidosSinDigitador, omitidosSinFechaReg){
     archivos_leidos: nArchivos,
     fuas_digitados_validos: BASE.length,
     digitadores_unicos: digitadoresUnicos,
+    duplicados_descartados_misma_fua_en_varios_excel: Math.max(duplicadosQuitados,0),
+    filas_sin_numero_fua: sinFuaContador,
     omitidos_sin_digitador: omitidosSinDigitador,
     omitidos_sin_fecha_registro: omitidosSinFechaReg,
     por_mes_de_registro: porMes
