@@ -1,5 +1,5 @@
 {
-  "_instrucciones": "Mapeo DNI -> datos del digitador. Para agregar, quitar el placeholder de foto o corregir a alguien, edita este archivo directamente y recarga la página (no hace falta tocar código). 'sexo': 'M' o 'F' (controla el color del avatar mientras no haya foto real). 'foto': deja vacío hasta que tengas una URL/archivo de foto real.",
+  "_instrucciones": "Mapeo DNI -> datos del digitador. Para agregar, quitar el placeholder de foto o corregir a alguien, edita este archivo directamente y recarga la página (no hace falta tocar código). 'sexo': 'M' o 'F' (controla el color del avatar mientras no haya foto real). 'foto': deja vacío hasta que tengas una URL/archivo de foto real. 'punto_digitacion': si la persona digita en MAS DE UN punto, sepáralos con coma dentro del mismo texto, ej: 'COVIRIALI, COVIRIALI_MARIPOSA' — el dashboard los reconoce como puntos distintos en el filtro 'Punto de digitación' y en las tarjetas se muestran unidos con ' · '.",
   "71706105": {
     "nombre": "EDITH NOYA MEZA",
     "cargo": "DIGITADOR",

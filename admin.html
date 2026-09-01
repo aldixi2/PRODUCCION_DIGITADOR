@@ -43,6 +43,8 @@
       proyecto de Personal de Salud (puedes seleccionar muchos).<br>
     • Este panel solo guarda filas que tengan <b>Digitador</b> y <b>Fecha Registro</b> — se agrupan por el mes en que
       se REGISTRÓ el FUA, no por el mes de atención.<br>
+    • Si el Excel trae columna <b>PPDD</b> (punto de digitación), se guarda tal cual — así el dashboard puede filtrar
+      por punto de digitación real, aparte del EESS de cada atención.<br>
     • Al presionar <b>"Descargar dig_*.json"</b> se descargará un archivo por cada mes (<b>dig_AAAA_MM.json</b>) más un
       <b>manifest.json</b>.<br>
     • Copia todos esos archivos a la carpeta <b>data\</b> de este proyecto (reemplazando lo anterior) y recarga el dashboard.
@@ -110,6 +112,7 @@ $("excel").addEventListener("change", async (e)=>{
         sinFuaContador++;
         fua = `__sinfua__${file.name}__${sinFuaContador}`;
       }
+      n.fua = fua; // se guarda para poder actualizar meses ya consolidados sin duplicar (ver actualizar_mes.py)
       vistos.set(fua, n); // si ya existía (de un archivo más viejo), esta versión la reemplaza
     }
 
@@ -160,6 +163,9 @@ function normalizarFila(r, sourceName){
   const estab = String(pick(r, ["EESS","Establecimiento","ESTABLECIMIENTO","Establecimiento de Salud"])).trim();
   const servicio = String(pick(r, ["Servicio"," Servicio","SERVICIO","Prestación","Prestacion"])).trim();
   const idServicio = String(pick(r, ["ID Servicio","ID SERVICIO","IDServicio","CPMS"])).trim();
+  // PPDD = "Punto de Digitación": el punto/sede donde se digita, que puede ser distinto
+  // del EESS de la atención (un digitador de un punto digita FUAs de varios EESS afiliados).
+  const puntoDigitacion = String(pick(r, ["PPDD","Punto Digitacion","Punto de Digitación","Punto De Digitacion","PUNTO DIGITACION"])).trim();
 
   return {
     digitador_dni: digitadorDni,
@@ -168,6 +174,7 @@ function normalizarFila(r, sourceName){
     hora_registro: parseHora(horaRegRaw),
     fecha_atencion: fa ? fa.iso : "",
     establecimiento: estab,
+    punto_digitacion: puntoDigitacion,
     servicio: servicio,
     id_servicio: idServicio,
     source: sourceName

@@ -737,6 +737,10 @@
         <select id="estab"><option value="">Todos</option></select>
       </div>
       <div class="fg" style="min-width:220px">
+        <label>Punto de digitación</label>
+        <select id="puntoDig"><option value="">Todos</option></select>
+      </div>
+      <div class="fg" style="min-width:220px">
         <label>Buscar digitador</label>
         <input id="profSearch" placeholder="Escribe un nombre o DNI...">
       </div>
@@ -836,16 +840,42 @@ function normalizaNombreCompleto(full){
   }
   return full;
 }
+// Un digitador puede digitar en más de un punto de digitación: en digitadores.json
+// eso se escribe separando los puntos con coma, p.ej. "COVIRIALI, COVIRIALI_MARIPOSA".
+function parsePuntos(puntoDigitacionRaw){
+  return String(puntoDigitacionRaw||"")
+    .split(/[,;/]+/)
+    .map(s=>s.trim())
+    .filter(Boolean);
+}
 function infoDigitador(dni){
   const info = DIGITADORES[dni] || {};
+  const puntos = parsePuntos(info.punto_digitacion);
   return {
     nombre: info.nombre ? normalizaNombreCompleto(info.nombre) : ("DNI "+dni),
     cargo: (info.cargo||"").trim() || "DIGITADOR",
-    punto: (info.punto_digitacion||"").trim(),
+    puntos,                       // array — para filtrar (uno o varios puntos)
+    punto: puntos.join(" · "),    // string — para mostrar en tarjetas/ranking (igual que antes)
     sexo: (info.sexo||"").trim().toUpperCase(), // "M" | "F" | ""
     contrato: (info.contrato||"").trim(),
     foto: (info.foto||"").trim()
   };
+}
+function catalogoPuntos(){
+  const set = new Set();
+  Object.keys(DIGITADORES).forEach(dni=>{
+    parsePuntos(DIGITADORES[dni].punto_digitacion).forEach(p=>set.add(p));
+  });
+  return [...set].sort((a,b)=>a.localeCompare(b,"es"));
+}
+// Puntos de digitación aplicables a UN registro (una fila / un FUA):
+// 1) Si el registro ya trae el dato real de la columna PPDD del Excel (capturado desde
+//    que admin.html/consolidar.py lo extraen), se usa ese — es la fuente de verdad.
+// 2) Si es un registro histórico consolidado ANTES de capturar PPDD, se usa como
+//    respaldo lo asignado a mano en digitadores.json para ese digitador.
+function puntosDeRegistro(r){
+  if(r && r.punto_digitacion) return [String(r.punto_digitacion).trim()];
+  return infoDigitador(r && r.digitador_dni).puntos;
 }
 function claseGenero(sexo){
   if(sexo==="M") return "m";
@@ -924,23 +954,26 @@ async function fetchMes(anio, mes){
 $("anio").addEventListener("change", ()=>{ fillMeses(); render(); });
 $("mes").addEventListener("change", render);
 $("estab").addEventListener("change", render);
+$("puntoDig").addEventListener("change", render);
 $("profSearch").addEventListener("input", render);
 $("metaDiaria").addEventListener("change", ()=>{
   localStorage.setItem("uspp_meta_digitador", $("metaDiaria").value);
   render();
 });
 $("btn").onclick = render;
-$("btnReset").onclick = ()=>{ $("estab").value=""; $("profSearch").value=""; render(); };
+$("btnReset").onclick = ()=>{ $("estab").value=""; $("puntoDig").value=""; $("profSearch").value=""; render(); };
 
 /* ══════════════════════════════════════════
    FILTRADO
 ══════════════════════════════════════════ */
 function aplicarFiltros(){
   const estab = $("estab").value;
+  const puntoSel = $("puntoDig").value;
   const q = $("profSearch").value.trim().toLowerCase();
   return RAW.filter(r=>{
     if(!r.digitador_dni) return false;
     if(estab && r.establecimiento!==estab) return false;
+    if(puntoSel && !puntosDeRegistro(r).includes(puntoSel)) return false;
     if(q){
       const nom = infoDigitador(r.digitador_dni).nombre.toLowerCase();
       if(!nom.includes(q) && !r.digitador_dni.includes(q)) return false;
@@ -952,7 +985,8 @@ function filtrosTexto(){
   const anio=$("anio").value, mes=$("mes").value;
   const mesName=MONTHS.find(x=>String(x.n)===String(mes))?.t||mes;
   const estab=$("estab").value?`EESS: ${$("estab").value}`:"EESS: Todos";
-  return `Periodo de registro: ${anio} — ${mesName}  |  ${estab}  |  Meta diaria: ${$("metaDiaria").value||"—"} FUAs/día`;
+  const punto=$("puntoDig").value?`Punto de digitación: ${$("puntoDig").value}`:"Punto de digitación: Todos";
+  return `Periodo de registro: ${anio} — ${mesName}  |  ${estab}  |  ${punto}  |  Meta diaria: ${$("metaDiaria").value||"—"} FUAs/día`;
 }
 function actualizarBannerFiltro(){
   $("printFiltroBanner").innerHTML = `<div class="pf-desglose">${esc(filtrosTexto())}</div>`;
@@ -968,9 +1002,10 @@ function agregarPorDigitador(d, nDias){
     if(!map.has(dni)) map.set(dni, {
       dni,
       dd: Object.fromEntries(Array.from({length:nDias},(_,i)=>[i+1,{n:0,horas:[]}])),
-      total: 0, lags: []
+      total: 0, lags: [], puntosVistos: new Set()
     });
     const obj = map.get(dni);
+    puntosDeRegistro(r).forEach(p=>obj.puntosVistos.add(p));
     const dia = Number(r.dia_registro)||0;
     if(dia>=1 && dia<=nDias){
       obj.dd[dia].n += 1;
@@ -995,7 +1030,10 @@ function agregarPorDigitador(d, nDias){
       minutosTotal += Math.max(...mins)-Math.min(...mins);
     }
     const info = infoDigitador(o.dni);
-    return {...o, ...info, diasConReg, promDia, cumplPct, minutosTotal};
+    // Puntos a mostrar: si el periodo trae dato real (PPDD), se usa ese (puede ser más
+    // de uno si el digitador registró en distintos puntos ese mes); si no, el asignado a mano.
+    const puntos = o.puntosVistos.size ? [...o.puntosVistos].sort((a,b)=>a.localeCompare(b,"es")) : info.puntos;
+    return {...o, ...info, puntos, punto: puntos.join(" · "), diasConReg, promDia, cumplPct, minutosTotal};
   });
 }
 function fmtHoras(min){
@@ -1226,7 +1264,21 @@ async function render(){
   $("estab").innerHTML = `<option value="">Todos</option>` + estabs.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
   if(estabs.includes(estabActual)) $("estab").value = estabActual;
 
-  const totAnt = datosMesAnt.filter(r=> !$("estab").value || r.establecimiento===$("estab").value).length;
+  // Catálogo de puntos de digitación: se combina lo que el propio mes trae de verdad
+  // (columna PPDD del Excel, ya presente en r.punto_digitacion) con lo asignado a mano
+  // en digitadores.json (para meses históricos que no capturaron PPDD todavía).
+  const puntoActual = $("puntoDig").value;
+  const puntosDelMes = RAW.map(r=>r.punto_digitacion).filter(Boolean);
+  const puntos = [...new Set([...puntosDelMes, ...catalogoPuntos()])].sort((a,b)=>a.localeCompare(b,"es"));
+  $("puntoDig").innerHTML = `<option value="">Todos</option>` + puntos.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join("");
+  if(puntos.includes(puntoActual)) $("puntoDig").value = puntoActual;
+
+  const puntoSel = $("puntoDig").value;
+  const totAnt = datosMesAnt.filter(r=>{
+    if($("estab").value && r.establecimiento!==$("estab").value) return false;
+    if(puntoSel && !puntosDeRegistro(r).includes(puntoSel)) return false;
+    return true;
+  }).length;
 
   const ahora = new Date();
   const pad = n=>String(n).padStart(2,"0");

@@ -131,6 +131,7 @@ def extraer_timestamp_archivo(nombre: str):
 
 CAND_FECHA_ATEN   = ["fecha atencion", "fecha de atencion", "fec atencion", "fec. atencion", "fecha", "fecha_atencion"]
 CAND_EESS         = ["eess", "establecimiento", "ipress", "nombre eess", "establecimieto", "establecimiento de salud"]
+CAND_PPDD         = ["ppdd", "punto digitacion", "punto de digitacion", "p.p.d.d.", "punto digitación"]
 CAND_SERVICIO     = ["servicio", "prestacion", "prestación", "procedimiento", "descripcion servicio", "descrip. servicio"]
 CAND_ID_SERVICIO  = ["id servicio", "id_servicio", "idservicio", "cpms", "id procedimiento"]
 CAND_DIGITADOR    = ["digitador", "usuario digitador", "usuario registro", "dni digitador"]
@@ -203,6 +204,7 @@ def main():
 
         fecha_col    = buscar_col(colmap, CAND_FECHA_ATEN)
         eess_col     = buscar_col(colmap, CAND_EESS)
+        ppdd_col     = buscar_col(colmap, CAND_PPDD)
         servicio_col = buscar_col(colmap, CAND_SERVICIO)
         id_serv_col  = buscar_col(colmap, CAND_ID_SERVICIO)
         hora_reg_col = buscar_col(colmap, CAND_HORA_REG)
@@ -232,17 +234,20 @@ def main():
 
             fa = None if fecha_col is None else parse_date_any(row.get(fecha_col))
             eess = "" if eess_col is None else str(row.get(eess_col, "")).strip()
+            ppdd = "" if ppdd_col is None else str(row.get(ppdd_col, "")).strip()
             servicio = "" if servicio_col is None else str(row.get(servicio_col, "")).strip()
             id_serv = "" if id_serv_col is None else str(row.get(id_serv_col, "")).strip()
             hora_reg = "" if hora_reg_col is None else parse_hora_any(row.get(hora_reg_col))
 
             vistos[fua] = {
+                "fua": fua,  # se guarda para poder actualizar meses ya consolidados sin duplicar (ver actualizar_mes.py)
                 "digitador_dni": dig_dni,
                 "anio_registro": fr.year, "mes_registro": fr.month, "dia_registro": fr.day,
                 "fecha_registro": fr.strftime("%Y-%m-%d"),
                 "hora_registro": hora_reg,
                 "fecha_atencion": fa.strftime("%Y-%m-%d") if fa else "",
                 "establecimiento": eess,
+                "punto_digitacion": ppdd,
                 "servicio": servicio,
                 "id_servicio": id_serv,
                 "source": fn
