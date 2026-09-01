@@ -638,6 +638,7 @@
       <div>
         <div class="f1" id="fechaActualizacion">Actualizado: cargando…</div>
         <div class="f2" id="fechaDigitacion">—</div>
+        <div class="f2" id="ultimaFechaDig">—</div>
       </div>
     </div>
     <div class="badge-estado" id="estado">Cargando…</div>
@@ -823,6 +824,11 @@ const UMBRAL_ALTO = 110, UMBRAL_BAJO = 70;
 
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) }
 function diasEnMes(anio,mes){ return new Date(Number(anio),Number(mes),0).getDate() }
+function fmtFechaCorta(iso){
+  if(!iso) return "";
+  const [y,m,dd] = String(iso).split("-");
+  return (y&&m&&dd) ? `${dd}/${m}/${y}` : String(iso);
+}
 
 let RAW = [];
 let DIGITADORES = {};
@@ -1123,16 +1129,21 @@ function cellClass(n){
   if(n>=20) return "c-med";
   return "c-low";
 }
+function puntosBadges(puntos){
+  if(!puntos || !puntos.length) return `<span class="muted">Sin punto registrado</span>`;
+  return puntos.map(p=>`<span class="badge" style="font-size:10px;padding:2px 8px;margin:1px 2px 1px 0;white-space:nowrap">${esc(p)}</span>`).join("");
+}
 function renderMatrizDigitador(rows, nDias){
-  let html = `<thead><tr><th class="th-name">Digitador</th>`;
+  let html = `<thead><tr><th class="th-name">Digitador</th><th class="th-name">Punto de digitación</th>`;
   for(let i=1;i<=nDias;i++) html+=`<th class="th-day">${i}</th>`;
   html += `<th class="th-total">Total</th><th class="th-total" style="background:#123049">Horas totales</th></tr></thead><tbody>`;
   const ordenado = [...rows].sort((a,b)=>b.total-a.total);
   if(!ordenado.length){
-    html += `<tr><td colspan="${nDias+2}" style="padding:16px">Sin registros con estos filtros.</td></tr>`;
+    html += `<tr><td colspan="${nDias+3}" style="padding:16px">Sin registros con estos filtros.</td></tr>`;
   }
   for(const r of ordenado){
     html += `<tr><td class="td-name">${esc(r.nombre)}<div class="muted" style="font-size:10px">${esc(r.cargo)}</div></td>`;
+    html += `<td class="td-name" style="white-space:normal">${puntosBadges(r.puntos)}</td>`;
     for(let i=1;i<=nDias;i++){
       const n = r.dd[i]?.n||0;
       html += `<td class="${cellClass(n)}">${n||""}</td>`;
@@ -1290,6 +1301,11 @@ async function render(){
   $("fechaDigitacion").textContent  = `${d.length} FUAs digitados en el periodo`;
   $("printFechaFooter").textContent = `Actualizado: ${fechaAhora} | ${d.length} FUAs digitados en el periodo`;
 
+  // Última fecha de digitación registrada en los datos (no la fecha en que se abrió la página):
+  // indica hasta cuándo está al día lo cargado en data/, con los filtros aplicados.
+  const ultimaFecha = d.reduce((max,r)=> (r.fecha_registro && r.fecha_registro>max) ? r.fecha_registro : max, "");
+  $("ultimaFechaDig").textContent = ultimaFecha ? `Última digitación registrada: ${fmtFechaCorta(ultimaFecha)}` : "Última digitación registrada: —";
+
   if(!d.length){
     $("estado").textContent = "⚠ Sin digitación en este periodo";
     $("directorioGrid").innerHTML = `<div class="dir-empty">No se encontraron FUAs digitados en el periodo elegido.</div>`;
@@ -1301,7 +1317,7 @@ async function render(){
   $("estado").textContent = "✅ Datos cargados";
 
   $("printSub").textContent = filtrosTexto();
-  $("printFechas").textContent = $("fechaActualizacion").textContent+" | "+$("fechaDigitacion").textContent;
+  $("printFechas").textContent = $("fechaActualizacion").textContent+" | "+$("fechaDigitacion").textContent+" | "+$("ultimaFechaDig").textContent;
   actualizarBannerFiltro();
   const nDias = diasEnMes(anio, mes);
   const rows = actualizarKPIs(d, nDias, totAnt);
