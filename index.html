@@ -182,6 +182,7 @@
   .kpi.k5{border-top-color:var(--verde)}
   .kpi.k6{border-top-color:var(--rojo)}
   .kpi.k7{border-top-color:var(--blue)}
+  .kpi.k8{border-top-color:var(--teal)}
   .kpi .klabel{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;font-weight:600}
   .kpi .kval{font-size:26px;font-weight:700;color:var(--texto);line-height:1}
   .kpi .ksub{font-size:11px;color:var(--muted);margin-top:5px;font-family:var(--f-cuerpo)}
@@ -196,6 +197,7 @@
   .kpi.k5 .kicon{background:var(--verde)}
   .kpi.k6 .kicon{background:var(--rojo)}
   .kpi.k7 .kicon{background:var(--blue)}
+  .kpi.k8 .kicon{background:var(--teal)}
 
   /* ══════════════════════════════
      CUMPLIMIENTO / ALERTAS / TENDENCIA
@@ -713,6 +715,12 @@
       <div class="kval skeleton" id="kpiTendencia" data-raw-val="0">00</div>
       <div class="ksub" id="kpiTendenciaSub">FUAs digitados</div>
     </div>
+    <div class="kpi k8">
+      <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 15l4.5-6 3.5 3 4-6 2 2"/></svg></div>
+      <div class="klabel">Ritmo de digitación</div>
+      <div class="kval skeleton" id="kpiRitmo" data-raw-val="0">00</div>
+      <div class="ksub">FUAs por hora digitada (equipo)</div>
+    </div>
   </div>
 
   <!-- FILTROS -->
@@ -798,6 +806,7 @@
         <button class="rk-metric-btn active" data-metric="total" type="button">Total de FUAs digitados</button>
         <button class="rk-metric-btn" data-metric="horas" type="button">Total de horas digitadas</button>
         <button class="rk-metric-btn" data-metric="promedio" type="button">Promedio por día</button>
+        <button class="rk-metric-btn" data-metric="ritmo" type="button">FUAs por hora</button>
         <button class="rk-metric-btn" data-metric="cumpl" type="button">% Cumplimiento vs. meta</button>
       </div>
     </div>
@@ -866,13 +875,6 @@ function infoDigitador(dni){
     contrato: (info.contrato||"").trim(),
     foto: (info.foto||"").trim()
   };
-}
-function catalogoPuntos(){
-  const set = new Set();
-  Object.keys(DIGITADORES).forEach(dni=>{
-    parsePuntos(DIGITADORES[dni].punto_digitacion).forEach(p=>set.add(p));
-  });
-  return [...set].sort((a,b)=>a.localeCompare(b,"es"));
 }
 // Puntos de digitación aplicables a UN registro (una fila / un FUA):
 // 1) Si el registro ya trae el dato real de la columna PPDD del Excel (capturado desde
@@ -1039,7 +1041,9 @@ function agregarPorDigitador(d, nDias){
     // Puntos a mostrar: si el periodo trae dato real (PPDD), se usa ese (puede ser más
     // de uno si el digitador registró en distintos puntos ese mes); si no, el asignado a mano.
     const puntos = o.puntosVistos.size ? [...o.puntosVistos].sort((a,b)=>a.localeCompare(b,"es")) : info.puntos;
-    return {...o, ...info, puntos, punto: puntos.join(" · "), diasConReg, promDia, cumplPct, minutosTotal};
+    // Ritmo: FUAs digitados por cada hora de trabajo (según el rango horario detectado por día).
+    const fuasPorHora = minutosTotal>0 ? o.total/(minutosTotal/60) : null;
+    return {...o, ...info, puntos, punto: puntos.join(" · "), diasConReg, promDia, cumplPct, minutosTotal, fuasPorHora};
   });
 }
 function fmtHoras(min){
@@ -1057,11 +1061,13 @@ function actualizarKPIs(d, nDias, totAnt){
   const nDig = rows.length;
   const promDiaGlobal = rows.length ? (rows.reduce((a,r)=>a+r.promDia,0)/rows.length) : 0;
   const horasTotal = rows.reduce((a,r)=>a+r.minutosTotal,0);
+  const ritmoGlobal = horasTotal>0 ? total/(horasTotal/60) : 0;
 
   $("kpiTotal").textContent = total; $("kpiTotal").classList.remove("skeleton");
   $("kpiProfs").textContent = nDig; $("kpiProfs").classList.remove("skeleton");
   $("kpiHoras").textContent = fmtHoras(horasTotal); $("kpiHoras").classList.remove("skeleton");
   $("kpiProm").textContent = promDiaGlobal.toFixed(1); $("kpiProm").classList.remove("skeleton");
+  $("kpiRitmo").textContent = ritmoGlobal.toFixed(1); $("kpiRitmo").classList.remove("skeleton");
 
   const conMeta = rows.filter(r=>r.cumplPct!=null);
   const cumplProm = conMeta.length ? Math.round(conMeta.reduce((a,r)=>a+r.cumplPct,0)/conMeta.length) : 0;
@@ -1136,10 +1142,10 @@ function puntosBadges(puntos){
 function renderMatrizDigitador(rows, nDias){
   let html = `<thead><tr><th class="th-name">Digitador</th><th class="th-name">Punto de digitación</th>`;
   for(let i=1;i<=nDias;i++) html+=`<th class="th-day">${i}</th>`;
-  html += `<th class="th-total">Total</th><th class="th-total" style="background:#123049">Horas totales</th></tr></thead><tbody>`;
+  html += `<th class="th-total">Total</th><th class="th-total" style="background:#123049">Horas totales</th><th class="th-total" style="background:#E49C30;color:#25232A">FUAs/hora</th></tr></thead><tbody>`;
   const ordenado = [...rows].sort((a,b)=>b.total-a.total);
   if(!ordenado.length){
-    html += `<tr><td colspan="${nDias+3}" style="padding:16px">Sin registros con estos filtros.</td></tr>`;
+    html += `<tr><td colspan="${nDias+4}" style="padding:16px">Sin registros con estos filtros.</td></tr>`;
   }
   for(const r of ordenado){
     html += `<tr><td class="td-name">${esc(r.nombre)}<div class="muted" style="font-size:10px">${esc(r.cargo)}</div></td>`;
@@ -1148,7 +1154,7 @@ function renderMatrizDigitador(rows, nDias){
       const n = r.dd[i]?.n||0;
       html += `<td class="${cellClass(n)}">${n||""}</td>`;
     }
-    html += `<td class="th-total">${r.total}</td><td class="th-total" style="background:#F5F3EC;color:#25232A">${fmtHoras(r.minutosTotal)}</td></tr>`;
+    html += `<td class="th-total">${r.total}</td><td class="th-total" style="background:#F5F3EC;color:#25232A">${fmtHoras(r.minutosTotal)}</td><td class="th-total" style="background:#FBF0DC;color:#25232A">${r.fuasPorHora!=null ? r.fuasPorHora.toFixed(1) : "—"}</td></tr>`;
   }
   html += "</tbody>";
   $("matrizDigitador").innerHTML = html;
@@ -1161,6 +1167,10 @@ function ordenarRankingDig(rows, metric){
   const arr=[...rows];
   if(metric==="promedio") arr.sort((a,b)=>b.promDia-a.promDia);
   else if(metric==="horas") arr.sort((a,b)=>b.minutosTotal-a.minutosTotal);
+  else if(metric==="ritmo") arr.sort((a,b)=>{
+    const av=a.fuasPorHora==null?-1:a.fuasPorHora, bv=b.fuasPorHora==null?-1:b.fuasPorHora;
+    return bv-av;
+  });
   else if(metric==="cumpl") arr.sort((a,b)=>{
     const av=a.cumplPct==null?-1:a.cumplPct, bv=b.cumplPct==null?-1:b.cumplPct;
     return bv-av;
@@ -1171,6 +1181,7 @@ function ordenarRankingDig(rows, metric){
 function valorRankingDig(r, metric){
   if(metric==="promedio") return r.promDia.toFixed(1);
   if(metric==="horas") return fmtHoras(r.minutosTotal);
+  if(metric==="ritmo") return r.fuasPorHora==null ? "—" : r.fuasPorHora.toFixed(1)+"/h";
   if(metric==="cumpl") return r.cumplPct==null?"—":r.cumplPct+"%";
   return String(r.total);
 }
@@ -1201,7 +1212,7 @@ function renderRankingDig(rows){
       <div class="rk-nombre">${esc(r.nombre)}</div>
       <div class="rk-profesion">${esc(r.cargo)}${r.punto?" · "+esc(r.punto):""}</div>
       <div class="rk-valor">${valorRankingDig(r,RANKING_METRIC_DIG)}</div>
-      <div class="rk-sub">Total ${r.total} · Prom/día ${r.promDia.toFixed(1)} · Horas ${fmtHoras(r.minutosTotal)}</div>
+      <div class="rk-sub">Total ${r.total} · Prom/día ${r.promDia.toFixed(1)} · Horas ${fmtHoras(r.minutosTotal)} · Ritmo ${r.fuasPorHora!=null?r.fuasPorHora.toFixed(1)+"/h":"—"}</div>
       <div class="rk-msg">${mensajeAlientoDig(i+1,r)}</div>
     </div>
   `).join("");
@@ -1220,6 +1231,7 @@ function renderRankingDig(rows){
         <span>Total <b>${r.total}</b></span>
         <span>Prom/día <b>${r.promDia.toFixed(1)}</b></span>
         <span>Horas <b>${fmtHoras(r.minutosTotal)}</b></span>
+        <span>Ritmo <b>${r.fuasPorHora!=null?r.fuasPorHora.toFixed(1)+"/h":"—"}</b></span>
       </div>
       <div class="rk-aliento">${mensajeAlientoDig(pos,r)}</div>
     </div>`;
@@ -1275,12 +1287,11 @@ async function render(){
   $("estab").innerHTML = `<option value="">Todos</option>` + estabs.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
   if(estabs.includes(estabActual)) $("estab").value = estabActual;
 
-  // Catálogo de puntos de digitación: se combina lo que el propio mes trae de verdad
-  // (columna PPDD del Excel, ya presente en r.punto_digitacion) con lo asignado a mano
-  // en digitadores.json (para meses históricos que no capturaron PPDD todavía).
+  // Catálogo de puntos de digitación para el filtro: solo los "activos", es decir, los que
+  // realmente aparecen en la columna PPDD de los datos de este mes (no el catálogo manual
+  // completo de digitadores.json, que puede incluir puntos ya inactivos o descontinuados).
   const puntoActual = $("puntoDig").value;
-  const puntosDelMes = RAW.map(r=>r.punto_digitacion).filter(Boolean);
-  const puntos = [...new Set([...puntosDelMes, ...catalogoPuntos()])].sort((a,b)=>a.localeCompare(b,"es"));
+  const puntos = [...new Set(RAW.map(r=>r.punto_digitacion).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
   $("puntoDig").innerHTML = `<option value="">Todos</option>` + puntos.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join("");
   if(puntos.includes(puntoActual)) $("puntoDig").value = puntoActual;
 
