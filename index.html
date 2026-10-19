@@ -664,8 +664,11 @@ button,select,input{font-family:inherit}button:focus-visible,.tab:focus-visible{
 @media(max-width:600px){.resumen-card{padding:14px}.resumen-heading{align-items:flex-start}.resumen-heading h2{font-size:17px}.resumen-total strong{font-size:20px}.mini-panel{padding:11px}.top-item{grid-template-columns:minmax(88px,1fr) minmax(45px,1.2fr) 42px}}
 </style><style>
 .dir-card{cursor:pointer;text-align:left;font:inherit}.dir-card:focus-visible{outline:3px solid rgba(21,156,148,.5);outline-offset:2px}.dir-card .dir-body::after{content:"Abrir ficha →";display:inline-block;margin-top:7px;font-size:9px;font-weight:700;color:#24728a;letter-spacing:.2px}
-.profile-dialog{width:min(600px,calc(100vw - 28px));max-height:min(88vh,760px);overflow:auto;border:0;border-radius:18px;padding:24px;background:#fff;color:#172b3a;box-shadow:0 24px 90px rgba(12,35,52,.28)}.profile-dialog::backdrop{background:rgba(15,35,50,.58);backdrop-filter:blur(3px)}.profile-close{position:absolute;top:12px;right:14px;width:36px;height:36px;border:1px solid #e0e8ed;border-radius:50%;background:#fff;color:#476274;font-size:24px;line-height:1;cursor:pointer}.profile-top{display:flex;align-items:center;gap:16px;padding:4px 36px 18px 0;border-bottom:1px solid #e7edf1}.profile-photo{width:88px;height:88px;flex:0 0 88px;border-radius:50%;overflow:hidden;background:#eaf2f5;border:4px solid #f1f5f7;display:grid;place-items:center}.profile-photo img{width:100%;height:100%;object-fit:cover}.profile-photo svg{width:38px;height:38px;stroke:#7293a4;fill:none;stroke-width:1.5}.profile-heading h2{margin:5px 0 3px;font:700 20px var(--f-display);color:#173f5f}.profile-role{font-size:12px;color:#6b7f8d}.profile-badges{display:flex;flex-wrap:wrap;gap:7px;padding:14px 0}.profile-badge{border-radius:999px;background:#eef5f7;color:#34576a;padding:6px 10px;font-size:10px;font-weight:600}.profile-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.profile-stat{padding:12px;border:1px solid #e5edf1;border-radius:11px;background:#fbfcfd}.profile-stat strong{display:block;font:700 19px var(--f-dato);color:#173f5f}.profile-stat span{display:block;margin-top:4px;font-size:9px;color:#718493;text-transform:uppercase;letter-spacing:.45px}.profile-footnote{margin:14px 0 0;padding:10px 12px;border-radius:9px;background:#f5f8fa;color:#71818b;font-size:10px;line-height:1.5}
+.profile-dialog{position:fixed;inset:0;margin:auto;width:min(600px,calc(100vw - 28px));max-height:min(88vh,760px);overflow:auto;border:0;border-radius:18px;padding:24px;background:#fff;color:#172b3a;box-shadow:0 24px 90px rgba(12,35,52,.28)}.profile-dialog::backdrop{background:rgba(15,35,50,.58);backdrop-filter:blur(3px)}.profile-close{position:absolute;top:12px;right:14px;width:36px;height:36px;border:1px solid #e0e8ed;border-radius:50%;background:#fff;color:#476274;font-size:24px;line-height:1;cursor:pointer}.profile-top{display:flex;align-items:center;gap:16px;padding:4px 36px 18px 0;border-bottom:1px solid #e7edf1}.profile-photo{width:88px;height:88px;flex:0 0 88px;border-radius:50%;overflow:hidden;background:#eaf2f5;border:4px solid #f1f5f7;display:grid;place-items:center}.profile-photo img{width:100%;height:100%;object-fit:cover}.profile-photo svg{width:38px;height:38px;stroke:#7293a4;fill:none;stroke-width:1.5}.profile-heading h2{margin:5px 0 3px;font:700 20px var(--f-display);color:#173f5f}.profile-role{font-size:12px;color:#6b7f8d}.profile-badges{display:flex;flex-wrap:wrap;gap:7px;padding:14px 0}.profile-badge{border-radius:999px;background:#eef5f7;color:#34576a;padding:6px 10px;font-size:10px;font-weight:600}.profile-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.profile-stat{padding:12px;border:1px solid #e5edf1;border-radius:11px;background:#fbfcfd}.profile-stat strong{display:block;font:700 19px var(--f-dato);color:#173f5f}.profile-stat span{display:block;margin-top:4px;font-size:9px;color:#718493;text-transform:uppercase;letter-spacing:.45px}.profile-footnote{margin:14px 0 0;padding:10px 12px;border-radius:9px;background:#f5f8fa;color:#71818b;font-size:10px;line-height:1.5}
 @media(max-width:480px){.profile-dialog{padding:18px}.profile-photo{width:70px;height:70px;flex-basis:70px}.profile-heading h2{font-size:16px}.profile-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-stat{padding:10px}.profile-stat strong{font-size:16px}}
+</style><style>
+.profile-dialog{width:min(900px,calc(100vw - 36px));padding:24px}.profile-layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr);gap:22px;align-items:stretch}.profile-main{min-width:0;display:flex;flex-direction:column}.profile-heading{padding:3px 38px 13px 0;border-bottom:1px solid #e7edf1}.profile-heading h2{font-size:21px}.profile-badges{padding:12px 0}.profile-stats{grid-template-columns:repeat(2,minmax(0,1fr));align-content:start}.profile-photo{grid-column:auto;grid-row:auto;width:100%;height:100%;min-height:390px;border-radius:14px;border:0;box-shadow:inset 0 0 0 1px rgba(23,63,95,.08)}.profile-photo img{width:100%;height:100%;min-height:390px;object-fit:cover}.profile-footnote{margin-top:16px}.profile-close{z-index:2}
+@media(max-width:680px){.profile-dialog{width:min(520px,calc(100vw - 24px));padding:18px}.profile-layout{grid-template-columns:1fr;gap:12px}.profile-heading{padding-right:36px}.profile-heading h2{font-size:18px}.profile-photo{grid-row:auto;min-height:260px;height:260px}.profile-photo img{min-height:260px}.profile-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style></head>
 <body>
 
@@ -873,12 +876,14 @@ button,select,input{font-family:inherit}button:focus-visible,.tab:focus-visible{
 
   <dialog class="profile-dialog" id="profileDialog" aria-labelledby="profileName">
     <button class="profile-close" id="closeProfile" type="button" aria-label="Cerrar ficha">×</button>
-    <div class="profile-top">
+    <div class="profile-layout">
+      <div class="profile-main">
+        <div class="profile-heading"><div class="eyebrow">FICHA DE PRODUCCIÓN</div><h2 id="profileName"></h2><div id="profileRole" class="profile-role"></div></div>
+        <div id="profileBadges" class="profile-badges"></div>
+        <div id="profileStats" class="profile-stats"></div>
+      </div>
       <div class="profile-photo" id="profilePhoto"></div>
-      <div class="profile-heading"><div class="eyebrow">FICHA DE PRODUCCIÓN</div><h2 id="profileName"></h2><div id="profileRole" class="profile-role"></div></div>
     </div>
-    <div id="profileBadges" class="profile-badges"></div>
-    <div id="profileStats" class="profile-stats"></div>
     <p class="profile-footnote">Las horas son una estimación basada en el rango entre el primer y último registro de cada día; no representan un control de asistencia.</p>
   </dialog>
   <!-- FOOTER IMPRESIÓN -->
@@ -1448,6 +1453,8 @@ cargarTodo();
 
 </body>
 </html>
+
+
 
 
 
