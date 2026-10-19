@@ -616,7 +616,44 @@
   .rk-row .avatar-sm{margin-right:2px}
   .rk-row{grid-template-columns:34px 38px 1fr auto 220px}
 </style>
-</head>
+<style>
+/* Rediseño UX/UI — producción del equipo */
+:root{--navy:#173f5f;--navy-2:#102f49;--blue:#276b8a;--teal:#159c94;--azulclaro:#eaf3f5;--papel:#f3f6f8;--borde-dato:#dce5eb;--texto:#172b3a;--muted:#667b8b;--radio:14px}
+body{background:#f3f6f8;color:#172b3a;font-size:14px}
+header{background:#123954;padding:10px clamp(16px,3vw,42px);min-height:66px;box-shadow:0 4px 18px rgba(17,48,72,.12)}
+header::after{height:3px;bottom:-3px;background:linear-gradient(90deg,#17a49a,#b7d7d9 55%,transparent)}
+.brand img,.brand-logo-fallback{height:38px;width:38px}.brand-texto h1{font-size:16px;letter-spacing:0}.brand-texto .sub{font-size:11px;color:#c7dae4}
+.wrap{max-width:1480px;padding:18px clamp(14px,2.2vw,32px) 34px}
+.card{border:1px solid #dce5eb;border-radius:14px;padding:16px 18px;margin-bottom:14px;box-shadow:0 3px 12px rgba(20,50,70,.035)}
+.card-titulo{font-size:14px;font-weight:700;color:#173f5f;padding-bottom:11px;margin-bottom:12px;border-bottom:1px solid #e8eef2}
+.kpis{gap:10px;margin-bottom:10px;grid-template-columns:repeat(4,minmax(0,1fr))}
+.kpi{min-height:100px;padding:14px 42px 12px 16px;border:1px solid #dce5eb;border-top:3px solid #1d6984;border-radius:13px;box-shadow:0 2px 8px rgba(20,50,70,.035);transition:box-shadow .16s,transform .16s}
+.kpi:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(20,50,70,.08)}
+.kpi .klabel{font-size:10px;letter-spacing:.55px;color:#627989}.kpi .kval{font-size:24px;color:#173f5f}.kpi .ksub{font-size:10px;color:#708493;line-height:1.35}
+.kpi .kicon{background:#eaf3f5;color:#276b8a}.kpi .kpi-ring{width:30px;height:30px}
+.kpis-secondary{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:0;margin-bottom:14px}
+.kpis-secondary .kpi{min-height:74px;padding:10px 38px 9px 14px;background:#fbfcfd;border-top:1px solid #dce5eb;border-left:3px solid #9bbac7}
+.kpis-secondary .kval{font-size:19px}.kpis-secondary .ksub{margin-top:3px}.kpis-secondary .kpi-ring{top:12px;right:12px}
+.filtros-nota{padding:9px 12px;border-radius:9px;background:#f5f9fb;border-left:3px solid #7ba8b8;margin-bottom:13px;font-size:11px;color:#5f7484}
+.row{display:grid;grid-template-columns:minmax(105px,.75fr) minmax(135px,.9fr) minmax(180px,1.2fr) minmax(180px,1.2fr) minmax(190px,1.25fr) auto auto;gap:10px;align-items:end}
+.fg{min-width:0!important}.fg label{font-size:9px;letter-spacing:.55px;color:#597284}.fg select,.fg input{height:38px;border:1px solid #d5e1e8;border-radius:9px;padding:8px 10px;background:#fff;color:#20394b;font-size:12px;min-width:0;max-width:100%}
+.fg select:focus,.fg input:focus,.meta-box input:focus{outline:3px solid rgba(21,156,148,.15);border-color:#159c94}
+.meta-box{min-height:38px;border-radius:9px;background:#eef6f6;border-color:#d6e9e7;padding:6px 9px;gap:6px}.meta-box label{font-size:10px}.meta-box input{width:54px}.meta-box .hintm{font-size:9px}
+.btn-ap,.btn-cl{height:38px;border-radius:9px;padding:8px 13px;font-size:11px}.btn-ap{background:#17637c}.btn-ap:hover{background:#124c63}.btn-cl{border-color:#d5e1e8;color:#486172}
+.card.soft{background:#eaf1f5;border:1px solid #e2ebef;padding:7px;margin-bottom:12px;box-shadow:none}
+.tabs{gap:5px;overflow-x:auto;flex-wrap:nowrap}.tab{white-space:nowrap;padding:9px 14px;border-radius:9px;font-size:11px}.tab.active{background:#17637c;border-color:#17637c;box-shadow:0 3px 8px rgba(23,99,124,.16)}
+.dir-grid{grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:10px}
+.dir-card{border:1px solid #e0e8ed;border-radius:12px;padding:12px 13px;gap:10px;min-height:124px;box-shadow:0 2px 8px rgba(20,50,70,.025)}
+.dir-card:hover{transform:translateY(-1px);box-shadow:0 7px 16px rgba(20,50,70,.07)}.dir-card::before{width:3px;background:#5b9caf!important}
+.avatar{width:46px;height:46px;border:0;outline:0;box-shadow:none;background:linear-gradient(145deg,#3b8ca1,#174565)!important}.avatar svg{width:52%;height:52%}.avatar-photo-hint{width:16px;height:16px;font-size:8px;border-color:#e0e8ed}
+.dir-name{font-size:12px;line-height:1.35;padding-right:38px}.dir-cargo{font-size:10px;color:#577082}.dir-punto{font-size:9px;color:#718491}.dir-stats{gap:0;justify-content:space-between;border-top:1px solid #edf1f3;padding-top:7px;margin-top:7px}.dir-stat{min-width:52px}.dir-stat b{font-size:13px;color:#173f5f}.dir-stat span{font-size:8px;letter-spacing:.4px}
+.scroll{border-color:#dce5eb;border-radius:10px;max-height:540px}table{font-size:10.5px}th{font-size:10px;padding:8px 7px}td{padding:6px 7px}
+.rk-toolbar{padding:10px;border:1px solid #e7edf1;border-radius:10px;background:#f8fafb}.rk-metric-btn{border-color:#d7e2e8;font-size:10.5px}.rk-metric-btn.active{background:#17637c;border-color:#17637c}.rk-podio{gap:10px;margin:12px 0}.rk-podio-card{border:1px solid #e2e9ed;border-radius:12px;padding:14px 12px}.rk-valor{font-size:23px!important}.rk-row{border-radius:10px;padding:8px 10px;grid-template-columns:28px 34px minmax(150px,1fr) auto minmax(180px,220px)}.rk-info-nombre{font-size:11px}.rk-stats{font-size:10px;gap:9px}
+button,select,input{font-family:inherit}button:focus-visible,.tab:focus-visible{outline:3px solid rgba(21,156,148,.35);outline-offset:2px}
+@media(max-width:1100px){.row{grid-template-columns:repeat(3,minmax(0,1fr))}.dir-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}.rk-row{grid-template-columns:24px 32px minmax(120px,1fr) auto}.rk-aliento{display:none}}
+@media(max-width:700px){header{padding:10px 14px}.header-derecha{width:100%;justify-content:space-between}.bloque-fechas{padding:6px 9px}.wrap{padding:12px 10px 24px}.kpis,.kpis-secondary{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpi{min-height:92px;padding:12px 34px 10px 12px}.kpi .kval{font-size:21px}.kpi .ksub{font-size:9px}.row{grid-template-columns:repeat(2,minmax(0,1fr))}.row>.fg:nth-child(3),.row>.fg:nth-child(4),.row>.fg:nth-child(5){grid-column:span 2}.row>.fg:nth-last-child(2){grid-column:span 2}.row>div:last-child{grid-column:span 2;display:flex!important}.row>div:last-child button{flex:1}.card{padding:13px}.dir-grid{grid-template-columns:1fr}.rk-row{grid-template-columns:24px 32px minmax(0,1fr)}.rk-stats{grid-column:2/-1;flex-wrap:wrap;white-space:normal}.rk-podio{grid-template-columns:1fr}.rk-podio-card{padding:12px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+</style></head>
 <body>
 
 <header>
@@ -692,7 +729,7 @@
     </div>
   </div>
 
-  <div class="kpis no-print">
+  <div class="kpis no-print kpis-secondary">
     <div class="kpi k5">
       <svg class="kpi-ring" viewBox="0 0 40 40">
         <circle cx="20" cy="20" r="16" fill="none" stroke="#E4E1D6" stroke-width="4"/>
@@ -1342,3 +1379,5 @@ cargarTodo();
 
 </body>
 </html>
+
+

@@ -1,0 +1,15 @@
+PRODUCCIÓN DEL DIGITADOR — USPP SATIPO
+
+Contenido
+- index.html: dashboard de producción.
+- admin.html: carga y consolidación de archivos Excel.
+- data/: bases mensuales originales y manifest.
+- digitadores.json y fotografías: directorio del equipo.
+- consolidar.py: herramienta original de consolidación.
+
+Para abrir el dashboard
+Los navegadores no permiten cargar estas bases JSON grandes de forma fiable al abrir index.html con doble clic. Inicie un servidor local desde esta carpeta:
+  py -m http.server 8000
+Luego abra http://localhost:8000 en el navegador.
+
+El dashboard conserva sus filtros por año, mes, establecimiento y punto de digitación; las vistas Directorio, Matriz y Ranking; impresión; y el panel admin.html.
